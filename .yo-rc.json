@@ -35,6 +35,9 @@
     "nativeLanguage": "en",
     "languages": ["en", "es"],
     "blueprints": [],
-    "skipClient": true
+    "skipClient": true,
+    "herokuAppName": "fun-unified-payments-api",
+    "herokuDeployType": "git",
+    "herokuJavaVersion": "11"
   }
 }
