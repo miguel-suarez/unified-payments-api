@@ -93,13 +93,6 @@ jhipster:
   mail:
     from: test@localhost
     base-url: http://127.0.0.1:8080
-  security:
-    authentication:
-      jwt:
-        # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
-        base64-secret: YzFlNjhjMzg1NjcwMzEyMDlmZDEyNDMxZmU1NDIxNmVlNzAwMDI0NjE4ZTNiMjUxN2RhMTBjZmMzMWNhZmRlYmM1NzM2NWIzMTJiYjBmY2NmOTAxNzIyODgwN2FlZGJjZjI5ZWFhYzhmN2QyZDlkY2NhMjYzNjQ4YmIzZmQ0MzE=
-        # Token is valid 24 hours
-        token-validity-in-seconds: 86400
   metrics:
     logs: # Reports metrics in the logs
       enabled: true
