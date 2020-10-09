@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.fun.driven.development.fun.unified.payments.api",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "6.10.3",
+    "applicationType": "monolith",
+    "baseName": "FunUnifiedPaymentsApi",
+    "packageName": "com.fun.driven.development.fun.unified.payments.api",
+    "packageFolder": "com/fun/driven/development/fun/unified/payments/api",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": true,
+    "jwtSecretKey": "YzFlNjhjMzg1NjcwMzEyMDlmZDEyNDMxZmU1NDIxNmVlNzAwMDI0NjE4ZTNiMjUxN2RhMTBjZmMzMWNhZmRlYmM1NzM2NWIzMTJiYjBmY2NmOTAxNzIyODgwN2FlZGJjZjI5ZWFhYzhmN2QyZDlkY2NhMjYzNjQ4YmIzZmQ0MzE=",
+    "embeddableLaunchScript": false,
+    "creationTimestamp": 1602240271073,
+    "testFrameworks": ["cucumber"],
+    "jhiPrefix": "fun",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "clientPackageManager": "npm",
+    "nativeLanguage": "en",
+    "languages": ["en", "es"],
+    "blueprints": [],
+    "skipClient": true
+  }
+}
