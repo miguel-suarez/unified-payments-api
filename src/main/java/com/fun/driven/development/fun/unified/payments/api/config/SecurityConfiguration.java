@@ -1,11 +1,13 @@
 package com.fun.driven.development.fun.unified.payments.api.config;
 
-import com.fun.driven.development.fun.unified.payments.api.security.*;
-import com.fun.driven.development.fun.unified.payments.api.security.jwt.*;
-
+import com.fun.driven.development.fun.unified.payments.api.repository.UserRepository;
+import com.fun.driven.development.fun.unified.payments.api.security.AuthoritiesConstants;
+import com.fun.driven.development.fun.unified.payments.api.security.DomainUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -14,7 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
@@ -24,15 +26,25 @@ import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 @Import(SecurityProblemSupport.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final TokenProvider tokenProvider;
-
     private final CorsFilter corsFilter;
     private final SecurityProblemSupport problemSupport;
 
-    public SecurityConfiguration(TokenProvider tokenProvider, CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
-        this.tokenProvider = tokenProvider;
+    public SecurityConfiguration(CorsFilter corsFilter, SecurityProblemSupport problemSupport) {
         this.corsFilter = corsFilter;
         this.problemSupport = problemSupport;
+    }
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Bean
+    public DomainUserDetailsService userDetailsServiceImpl() {
+        return new DomainUserDetailsService(userRepository);
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsServiceImpl()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -43,10 +55,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-            .antMatchers(HttpMethod.OPTIONS, "/**")
-            .antMatchers("/h2-console/**")
-            .antMatchers("/swagger-ui/index.html")
-            .antMatchers("/test/**");
+           .antMatchers(HttpMethod.OPTIONS, "/**")
+           .antMatchers("/h2-console/**")
+           .antMatchers("/swagger-ui/index.html")
+           .antMatchers("/test/**");
     }
 
     @Override
@@ -55,24 +67,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
             .csrf()
             .disable()
-            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(corsFilter, BasicAuthenticationFilter.class)
             .exceptionHandling()
-                .authenticationEntryPoint(problemSupport)
-                .accessDeniedHandler(problemSupport)
-        .and()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)
+            .and()
             .headers()
             .contentSecurityPolicy("default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:")
-        .and()
+            .and()
             .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-        .and()
+            .and()
             .featurePolicy("geolocation 'none'; midi 'none'; sync-xhr 'none'; microphone 'none'; camera 'none'; magnetometer 'none'; gyroscope 'none'; speaker 'none'; fullscreen 'self'; payment 'none'")
-        .and()
+            .and()
             .frameOptions()
             .deny()
-        .and()
+            .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
+            .and()
             .authorizeRequests()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/register").permitAll()
@@ -84,14 +96,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/management/info").permitAll()
             .antMatchers("/management/prometheus").permitAll()
             .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-        .and()
-            .httpBasic()
-        .and()
-            .apply(securityConfigurerAdapter());
+            .and()
+            .httpBasic();
         // @formatter:on
-    }
-
-    private JWTConfigurer securityConfigurerAdapter() {
-        return new JWTConfigurer(tokenProvider);
     }
 }
