@@ -1,0 +1,117 @@
+
+entity Merchant {
+    name String required maxlength(250),
+    reference String required maxlength(25) unique,
+    created Instant required
+}
+
+enum PaymentMethodType {
+	Card,
+    Mobile,
+    Code
+}
+
+entity PaymentMethod {
+	name String required maxlength(250),
+    type PaymentMethodType required,
+    tokenizable Boolean required, 
+    url String required maxlength(1000),
+    active Boolean required
+}
+
+entity PaymentMethodCredential {
+    apiKey String required maxlength(500),
+    validUntil Instant,
+}
+
+enum UnavailableType {
+	Maintenance,
+    UnderAttack,
+    Overload
+}
+
+entity PaymentMethodUnavailable {
+	type UnavailableType required,
+    from Instant required,
+    until Instant,
+}
+
+/**
+ * Payment Method propietary token
+ */
+entity PaymentMethodToken {
+    token String required maxlength(500) unique,    
+    validUntil Instant,
+}
+
+/**
+ * Fun unified payment token
+ */
+entity UnifiedPaymentToken {
+    token String required maxlength(500) unique,    
+    validUntil Instant,
+}
+
+entity Currency {
+	isoCode String required maxlength(3) unique,
+    isoNumericCode Integer required unique,
+    defaultFractionDigits Integer required
+}
+
+entity Transaction {
+	amount Long required,
+    funReference String required maxlength(25) unique,
+    transactionDate Instant required,
+    externalReference String maxlength(25),
+}
+
+dto all with mapstruct 
+service all with serviceImpl
+
+relationship OneToMany {
+    Merchant{user} to User
+}
+
+relationship ManyToMany {
+    Merchant{paymentMethod} to PaymentMethod{merchant}
+}
+
+relationship OneToMany {
+    Merchant{paymentMethodCredential} to PaymentMethodCredential{merchant}
+}
+
+relationship OneToMany {
+    Merchant{paymentMethodToken} to PaymentMethodToken{merchant required}
+}
+
+relationship OneToMany {
+    Merchant{unifiedPaymentToken} to UnifiedPaymentToken{merchant required}
+}
+
+relationship OneToOne {
+    Transaction{merchant required} to Merchant
+}
+
+relationship OneToOne {
+    Transaction{currency required} to Currency
+}
+
+relationship ManyToOne {
+    Transaction{paymentMethod required} to PaymentMethod
+}
+
+relationship OneToOne {
+    Transaction{unifiedPaymentToken required} to UnifiedPaymentToken
+}
+
+relationship OneToOne {
+    Transaction{paymentMethodToken} to PaymentMethodToken
+}
+
+relationship OneToMany {
+    PaymentMethod{paymentMethodUnavailable} to PaymentMethodUnavailable{paymentMethod required}
+}
+
+relationship OneToMany {
+    PaymentMethod{paymentMethodCredential} to PaymentMethodCredential{paymentMethod required}
+}
