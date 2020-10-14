@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <!--
+        Added the constraints for entity Transaction.
+    -->
+    <changeSet id="20201012185540-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="merchant_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_merchant_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="merchant"/>
+
+        <addForeignKeyConstraint baseColumnNames="currency_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_currency_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="currency"/>
+
+        <addForeignKeyConstraint baseColumnNames="unified_payment_token_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_unified_payment_token_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="unified_payment_token"/>
+
+        <addForeignKeyConstraint baseColumnNames="payment_method_token_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_payment_method_token_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="payment_method_token"/>
+
+        <addForeignKeyConstraint baseColumnNames="payment_method_id"
+                                 baseTableName="transaction"
+                                 constraintName="fk_transaction_payment_method_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="payment_method"/>
+
+    </changeSet>
+</databaseChangeLog>

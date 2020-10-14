@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <!--
+        Added the constraints for entity PaymentMethodUnavailable.
+    -->
+    <changeSet id="20201012185240-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="payment_method_id"
+                                 baseTableName="payment_method_unavailable"
+                                 constraintName="fk_payment_method_unavailable_payment_method_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="payment_method"/>
+
+    </changeSet>
+</databaseChangeLog>
