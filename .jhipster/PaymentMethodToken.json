@@ -1,0 +1,37 @@
+{
+  "name": "PaymentMethodToken",
+  "fields": [
+    {
+      "fieldName": "token",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength", "unique"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "validUntil",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "merchant",
+      "otherEntityRelationshipName": "paymentMethodToken",
+      "relationshipValidateRules": "required",
+      "relationshipName": "merchant",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201012185340",
+  "entityTableName": "payment_method_token",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*",
+  "javadoc": "Payment Method propietary token"
+}

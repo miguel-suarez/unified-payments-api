@@ -1,0 +1,41 @@
+{
+  "name": "PaymentMethodUnavailable",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "UnavailableType",
+      "fieldValues": "Maintenance,UnderAttack,Overload",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "from",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "until",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "paymentMethod",
+      "otherEntityRelationshipName": "paymentMethodUnavailable",
+      "relationshipValidateRules": "required",
+      "relationshipName": "paymentMethod",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201012185240",
+  "entityTableName": "payment_method_unavailable",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

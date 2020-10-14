@@ -1,0 +1,67 @@
+{
+  "name": "Merchant",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "250"
+    },
+    {
+      "fieldName": "reference",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength", "unique"],
+      "fieldValidateRulesMaxlength": "25"
+    },
+    {
+      "fieldName": "created",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "user"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "paymentMethodCredential",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "paymentMethodCredential"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "paymentMethodToken",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "paymentMethodToken"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "unifiedPaymentToken",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "unifiedPaymentToken"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "paymentMethod",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "paymentMethod",
+      "otherEntityField": "id",
+      "ownerSide": true
+    }
+  ],
+  "changelogDate": "20201012184940",
+  "entityTableName": "merchant",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}

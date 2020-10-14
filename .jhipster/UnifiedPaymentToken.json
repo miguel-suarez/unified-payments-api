@@ -1,0 +1,37 @@
+{
+  "name": "UnifiedPaymentToken",
+  "fields": [
+    {
+      "fieldName": "token",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength", "unique"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "validUntil",
+      "fieldType": "Instant"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "merchant",
+      "otherEntityRelationshipName": "unifiedPaymentToken",
+      "relationshipValidateRules": "required",
+      "relationshipName": "merchant",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20201012185440",
+  "entityTableName": "unified_payment_token",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*",
+  "javadoc": "Fun unified payment token"
+}

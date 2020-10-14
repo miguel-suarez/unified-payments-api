@@ -1,0 +1,66 @@
+{
+  "name": "PaymentMethod",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "250"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "PaymentMethodType",
+      "fieldValues": "Card,Mobile,Code",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "tokenizable",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "url",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "1000"
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "paymentMethodUnavailable",
+      "otherEntityRelationshipName": "paymentMethod",
+      "relationshipName": "paymentMethodUnavailable"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "paymentMethodCredential",
+      "otherEntityRelationshipName": "paymentMethod",
+      "relationshipName": "paymentMethodCredential"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "merchant",
+      "otherEntityRelationshipName": "paymentMethod",
+      "relationshipName": "merchant",
+      "otherEntityField": "id",
+      "ownerSide": false
+    }
+  ],
+  "changelogDate": "20201012185040",
+  "entityTableName": "payment_method",
+  "dto": "mapstruct",
+  "pagination": "no",
+  "service": "serviceImpl",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
