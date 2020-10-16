@@ -1,5 +1,8 @@
 package com.fun.driven.development.fun.unified.payments.api.service.dto;
 
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.TransactionType;
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.UnifiedTransactionResult;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -20,7 +23,14 @@ public class TransactionDTO implements Serializable {
     private String funReference;
 
     @NotNull
+    private TransactionType transactionType;
+
+    @NotNull
     private Instant transactionDate;
+
+    private UnifiedTransactionResult result;
+
+    private String processorResult;
 
     @Size(max = 25)
     private String externalReference;
@@ -59,12 +69,36 @@ public class TransactionDTO implements Serializable {
         this.funReference = funReference;
     }
 
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
     public Instant getTransactionDate() {
         return transactionDate;
     }
 
     public void setTransactionDate(Instant transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public UnifiedTransactionResult getResult() {
+        return result;
+    }
+
+    public void setResult(UnifiedTransactionResult result) {
+        this.result = result;
+    }
+
+    public String getProcessorResult() {
+        return processorResult;
+    }
+
+    public void setProcessorResult(String processorResult) {
+        this.processorResult = processorResult;
     }
 
     public String getExternalReference() {
@@ -139,7 +173,10 @@ public class TransactionDTO implements Serializable {
             "id=" + getId() +
             ", amount=" + getAmount() +
             ", funReference='" + getFunReference() + "'" +
+            ", transactionType='" + getTransactionType() + "'" +
             ", transactionDate='" + getTransactionDate() + "'" +
+            ", result='" + getResult() + "'" +
+            ", processorResult='" + getProcessorResult() + "'" +
             ", externalReference='" + getExternalReference() + "'" +
             ", merchantId=" + getMerchantId() +
             ", currencyId=" + getCurrencyId() +

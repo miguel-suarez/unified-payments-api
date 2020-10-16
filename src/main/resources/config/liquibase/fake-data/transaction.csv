@@ -1,11 +1,11 @@
-id;amount;fun_reference;transaction_date;external_reference;merchant_id;currency_id;unified_payment_token_id;payment_method_id
-1;2849;B2C Ergonomic Concrete So;2020-10-12T07:36:04;Facilitator;1;1;1;1
-2;56354;Response B2B US Dollar;2020-10-11T20:16:51;cross-platform Shirt;2;2;2;2
-3;46784;Kids;2020-10-12T00:08:37;implement internet soluti;3;3;3;3
-4;37492;Strategist Innovative Fre;2020-10-12T11:59:34;Checking Account;4;4;4;4
-5;36557;Small Operations payment;2020-10-11T22:49:41;Strategist Licensed;5;5;5;5
-6;3847;compressing interface;2020-10-12T11:53:06;Technician next-generatio;6;6;6;6
-7;38135;virtual;2020-10-12T07:50:28;Industrial;7;7;7;7
-8;82194;grey Gourde US Dollar 4th;2020-10-12T09:49:36;primary;8;8;8;8
-9;55302;Bedfordshire programming;2020-10-11T19:34:21;Regional Northern Mariana;9;9;9;9
-10;24516;innovate;2020-10-12T12:03:02;enable;10;10;10;10
+id;amount;fun_reference;transaction_type;transaction_date;result;processor_result;external_reference;merchant_id;currency_id;unified_payment_token_id;payment_method_id
+1;2849;B2C Ergonomic Concrete So;Payout;2020-10-11T20:05:41;Refused;Operations cross-platform Shirt;red invoice;1;1;1;1
+2;38347;Garden Haiti;Sale;2020-10-12T12:21:44;Cancelled;New Caledonia Auto Loan Account Zimbabwe;Licensed Sleek Fresh Ball;2;2;2;2
+3;29343;Technician next-generatio;Sale;2020-10-12T18:15:58;Error;optimize;Awesome Berkshire Pizza;3;3;3;3
+4;88371;programming deliver withd;Refund;2020-10-12T01:26:34;Cancelled;connecting Bacon optical;olive IB;4;4;4;4
+5;21598;Clothing port;Sale;2020-10-12T17:56:22;Pending;Pizza Forward Montana;hard drive optical;5;5;5;5
+6;23270;Tools Svalbard & Jan Maye;Payout;2020-10-12T04:40:38;Error;applications SMTP;Developer;6;6;6;6
+7;20838;calculate Awesome Persona;Refund;2020-10-12T17:43:36;Success;Rustic Alabama;Malaysia;7;7;7;7
+8;67464;ADP mint green Health;Sale;2020-10-12T03:16:20;Cancelled;withdrawal synergies;digital Pitcairn Islands ;8;8;8;8
+9;26897;Auto Loan Account softwar;Payout;2020-10-12T13:20:15;Pending;parsing object-oriented Coves;Tuna overriding;9;9;9;9
+10;40355;Bedfordshire secured line;Refund;2020-10-12T18:14:34;Pending;Concrete;Health Division;10;10;10;10

@@ -19,8 +19,17 @@
             <column name="fun_reference" type="varchar(25)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="ux_transaction_fun_reference" />
             </column>
+            <column name="transaction_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="transaction_date" type="datetime">
                 <constraints nullable="false" />
+            </column>
+            <column name="result" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="processor_result" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
             <column name="external_reference" type="varchar(25)">
                 <constraints nullable="true" />
@@ -66,7 +75,10 @@
             <column name="id" type="numeric"/>
             <column name="amount" type="numeric"/>
             <column name="fun_reference" type="string"/>
+            <column name="transaction_type" type="string"/>
             <column name="transaction_date" type="datetime"/>
+            <column name="result" type="string"/>
+            <column name="processor_result" type="string"/>
             <column name="external_reference" type="string"/>
             <column name="merchant_id" type="numeric"/>
             <column name="currency_id" type="numeric"/>

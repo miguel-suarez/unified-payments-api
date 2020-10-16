@@ -13,9 +13,24 @@
       "fieldValidateRulesMaxlength": "25"
     },
     {
+      "fieldName": "transactionType",
+      "fieldType": "TransactionType",
+      "fieldValues": "Sale,Refund,Payout",
+      "fieldValidateRules": ["required"]
+    },
+    {
       "fieldName": "transactionDate",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "result",
+      "fieldType": "UnifiedTransactionResult",
+      "fieldValues": "Cancelled,Error,Pending,Refused,Success"
+    },
+    {
+      "fieldName": "processorResult",
+      "fieldType": "String"
     },
     {
       "fieldName": "externalReference",

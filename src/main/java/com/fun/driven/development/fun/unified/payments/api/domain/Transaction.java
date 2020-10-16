@@ -1,15 +1,31 @@
 package com.fun.driven.development.fun.unified.payments.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.TransactionType;
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.UnifiedTransactionResult;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 
+/**
+ * A Transaction.
+ */
 @Entity
 @Table(name = "transaction")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -32,8 +48,20 @@ public class Transaction implements Serializable {
     private String funReference;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type", nullable = false)
+    private TransactionType transactionType;
+
+    @NotNull
     @Column(name = "transaction_date", nullable = false)
     private Instant transactionDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "result")
+    private UnifiedTransactionResult result;
+
+    @Column(name = "processor_result")
+    private String processorResult;
 
     @Size(max = 25)
     @Column(name = "external_reference", length = 25)
@@ -98,6 +126,19 @@ public class Transaction implements Serializable {
         this.funReference = funReference;
     }
 
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public Transaction transactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+        return this;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
     public Instant getTransactionDate() {
         return transactionDate;
     }
@@ -109,6 +150,32 @@ public class Transaction implements Serializable {
 
     public void setTransactionDate(Instant transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public UnifiedTransactionResult getResult() {
+        return result;
+    }
+
+    public Transaction result(UnifiedTransactionResult result) {
+        this.result = result;
+        return this;
+    }
+
+    public void setResult(UnifiedTransactionResult result) {
+        this.result = result;
+    }
+
+    public String getProcessorResult() {
+        return processorResult;
+    }
+
+    public Transaction processorResult(String processorResult) {
+        this.processorResult = processorResult;
+        return this;
+    }
+
+    public void setProcessorResult(String processorResult) {
+        this.processorResult = processorResult;
     }
 
     public String getExternalReference() {
@@ -213,7 +280,10 @@ public class Transaction implements Serializable {
             "id=" + getId() +
             ", amount=" + getAmount() +
             ", funReference='" + getFunReference() + "'" +
+            ", transactionType='" + getTransactionType() + "'" +
             ", transactionDate='" + getTransactionDate() + "'" +
+            ", result='" + getResult() + "'" +
+            ", processorResult='" + getProcessorResult() + "'" +
             ", externalReference='" + getExternalReference() + "'" +
             "}";
     }

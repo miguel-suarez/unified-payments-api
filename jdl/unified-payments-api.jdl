@@ -14,7 +14,7 @@ enum PaymentMethodType {
 entity PaymentMethod {
 	name String required maxlength(250),
     type PaymentMethodType required,
-    tokenizable Boolean required, 
+    tokenizable Boolean required,
     url String required maxlength(1000),
     active Boolean required
 }
@@ -40,7 +40,7 @@ entity PaymentMethodUnavailable {
  * Payment Method propietary token
  */
 entity PaymentMethodToken {
-    token String required maxlength(500) unique,    
+    token String required maxlength(500) unique,
     validUntil Instant,
 }
 
@@ -48,7 +48,7 @@ entity PaymentMethodToken {
  * Fun unified payment token
  */
 entity UnifiedPaymentToken {
-    token String required maxlength(500) unique,    
+    token String required maxlength(500) unique,
     validUntil Instant,
 }
 
@@ -58,14 +58,31 @@ entity Currency {
     defaultFractionDigits Integer required
 }
 
+enum TransactionType {
+	Sale,
+    Refund,
+    Payout
+}
+
+enum UnifiedTransactionResult {
+	Cancelled,
+    Error,
+    Pending,
+    Refused,
+    Success
+}
+
 entity Transaction {
 	amount Long required,
     funReference String required maxlength(25) unique,
+    transactionType TransactionType required,
     transactionDate Instant required,
+    result UnifiedTransactionResult,
+    processorResult String,
     externalReference String maxlength(25),
 }
 
-dto all with mapstruct 
+dto all with mapstruct
 service all with serviceImpl
 
 relationship OneToMany {
