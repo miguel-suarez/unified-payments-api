@@ -85,7 +85,7 @@ entity Transaction {
 dto all with mapstruct
 service all with serviceImpl
 
-relationship OneToMany {
+relationship ManyToMany {
     Merchant{user} to User
 }
 

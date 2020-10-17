@@ -25,6 +25,7 @@ public class MerchantDTO implements Serializable {
     @NotNull
     private Instant created;
 
+    private Set<UserDTO> users = new HashSet<>();
     private Set<PaymentMethodDTO> paymentMethods = new HashSet<>();
 
     public Long getId() {
@@ -57,6 +58,14 @@ public class MerchantDTO implements Serializable {
 
     public void setCreated(Instant created) {
         this.created = created;
+    }
+
+    public Set<UserDTO> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserDTO> users) {
+        this.users = users;
     }
 
     public Set<PaymentMethodDTO> getPaymentMethods() {
@@ -92,6 +101,7 @@ public class MerchantDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", reference='" + getReference() + "'" +
             ", created='" + getCreated() + "'" +
+            ", users='" + getUsers() + "'" +
             ", paymentMethods='" + getPaymentMethods() + "'" +
             "}";
     }

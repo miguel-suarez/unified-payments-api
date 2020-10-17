@@ -3,9 +3,19 @@ package com.fun.driven.development.fun.unified.payments.api.domain;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -39,10 +49,6 @@ public class Merchant implements Serializable {
 
     @OneToMany(mappedBy = "merchant")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<User> users = new HashSet<>();
-
-    @OneToMany(mappedBy = "merchant")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<PaymentMethodCredential> paymentMethodCredentials = new HashSet<>();
 
     @OneToMany(mappedBy = "merchant")
@@ -52,6 +58,13 @@ public class Merchant implements Serializable {
     @OneToMany(mappedBy = "merchant")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<UnifiedPaymentToken> unifiedPaymentTokens = new HashSet<>();
+
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JoinTable(name = "merchant_user",
+               joinColumns = @JoinColumn(name = "merchant_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -106,29 +119,6 @@ public class Merchant implements Serializable {
 
     public void setCreated(Instant created) {
         this.created = created;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public Merchant users(Set<User> users) {
-        this.users = users;
-        return this;
-    }
-
-    public Merchant addUser(User user) {
-        this.users.add(user);
-        return this;
-    }
-
-    public Merchant removeUser(User user) {
-        this.users.remove(user);
-        return this;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
     }
 
     public Set<PaymentMethodCredential> getPaymentMethodCredentials() {
@@ -204,6 +194,29 @@ public class Merchant implements Serializable {
 
     public void setUnifiedPaymentTokens(Set<UnifiedPaymentToken> unifiedPaymentTokens) {
         this.unifiedPaymentTokens = unifiedPaymentTokens;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public Merchant users(Set<User> users) {
+        this.users = users;
+        return this;
+    }
+
+    public Merchant addUser(User user) {
+        this.users.add(user);
+        return this;
+    }
+
+    public Merchant removeUser(User user) {
+        this.users.remove(user);
+        return this;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public Set<PaymentMethod> getPaymentMethods() {

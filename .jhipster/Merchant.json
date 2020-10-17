@@ -22,12 +22,6 @@
   "relationships": [
     {
       "relationshipType": "one-to-many",
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "merchant",
-      "relationshipName": "user"
-    },
-    {
-      "relationshipType": "one-to-many",
       "otherEntityName": "paymentMethodCredential",
       "otherEntityRelationshipName": "merchant",
       "relationshipName": "paymentMethodCredential"
@@ -43,6 +37,14 @@
       "otherEntityName": "unifiedPaymentToken",
       "otherEntityRelationshipName": "merchant",
       "relationshipName": "unifiedPaymentToken"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "merchant",
+      "relationshipName": "user",
+      "otherEntityField": "id",
+      "ownerSide": true
     },
     {
       "relationshipType": "many-to-many",

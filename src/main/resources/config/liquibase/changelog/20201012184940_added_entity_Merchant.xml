@@ -29,6 +29,17 @@
 
     <changeSet id="20201012184940-1-relations" author="jhipster">
 
+        <createTable tableName="merchant_user">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="merchant_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="merchant_id, user_id" tableName="merchant_user"/>
+
         <createTable tableName="merchant_payment_method">
             <column name="payment_method_id" type="bigint">
                 <constraints nullable="false"/>
