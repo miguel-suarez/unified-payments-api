@@ -1,0 +1,113 @@
+# API-first development with OpenAPI
+# This file will be used at compile time to generate Spring-MVC endpoint stubs using openapi-generator
+openapi: 3.0.1
+info:
+  title: Fun Unified Payments API
+  description: >-
+    At Fun Unified Payments we provide first class integration with a growing
+    set of payment methods and payment service providers.
+    Our mission is to allow our clients to easily process their payments
+    through their preferred payments solutions via our Unified Payments API.
+
+    The process is a simple as generate a unified token and then request a payment
+    with it.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api'
+    description: Development server
+  - url: 'https://fun-unified-payments-api.herokuapp.com/api'
+    description: Production server
+tags:
+  - name: token
+    description: Unified payment token management
+  - name: payment
+    description: Easily process payments
+paths:
+  /v1/unified/tokens:
+    post:
+      tags:
+        - token
+      summary: Generate a unified payment token for a card
+      operationId: createToken
+      requestBody:
+        description: Card for which the token will be generated
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Card'
+        required: true
+      parameters:
+        - in: header
+          name: X-Unified-Payments-Merchant-Reference
+          schema:
+            type: string
+          required: true
+      responses:
+        '201':
+          description: 'Successfully created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: 'Invalid card supplied'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbidenError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      security:
+        - basic_auth:
+            - 'write:tokens'
+            - 'read:tokens'
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Card:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+          minLength: 10
+          maxLength: 20
+          example: 370000000000002
+        expiryMonth:
+          type: integer
+          maximum: 12
+          minimum: 1
+          example: 3
+        expiryYear:
+          type: integer
+          maximum: 2100
+          minimum: 2020
+          example: 2030
+      required:
+        - cardNumber
+        - expiryMonth
+        - expiryYear
+      xml:
+        name: Card
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          maxLength: 500
+        validUntil:
+          type: string
+          pattern: /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?(([+-]\d\d:\d\d)|Z)?$/i
+          example: 2020-10-16T15:01:54Z
+      xml:
+        name: Token
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+    ForbidenError:
+      description: User isn't allow to perform the requested action
+    ServerError:
+      description: Sorry we can't process this request at the moment
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
