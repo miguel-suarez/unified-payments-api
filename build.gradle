@@ -295,6 +295,8 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-localconfig-connector"
     implementation "org.springframework.cloud:spring-cloud-heroku-connector"
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
+
+    implementation "com.braintreepayments.gateway:braintree-java:${braintree_gateway_version}"
 }
 
 if (project.hasProperty("gae")) {
