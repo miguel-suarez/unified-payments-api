@@ -13,8 +13,8 @@ public class PaymentMethodCredentialDTO implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(max = 500)
-    private String apiKey;
+    @Size(max = 1000)
+    private String credentials;
 
     private Instant validUntil;
 
@@ -30,12 +30,12 @@ public class PaymentMethodCredentialDTO implements Serializable {
         this.id = id;
     }
 
-    public String getApiKey() {
-        return apiKey;
+    public String getCredentials() {
+        return credentials;
     }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
     }
 
     public Instant getValidUntil() {
@@ -84,7 +84,7 @@ public class PaymentMethodCredentialDTO implements Serializable {
     public String toString() {
         return "PaymentMethodCredentialDTO{" +
             "id=" + getId() +
-            ", apiKey='" + getApiKey() + "'" +
+            ", credentials='" + getCredentials() + "'" +
             ", validUntil='" + getValidUntil() + "'" +
             ", merchantId=" + getMerchantId() +
             ", paymentMethodId=" + getPaymentMethodId() +

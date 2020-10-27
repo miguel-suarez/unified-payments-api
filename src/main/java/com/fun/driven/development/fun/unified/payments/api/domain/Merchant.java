@@ -53,10 +53,6 @@ public class Merchant implements Serializable {
 
     @OneToMany(mappedBy = "merchant")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<PaymentMethodToken> paymentMethodTokens = new HashSet<>();
-
-    @OneToMany(mappedBy = "merchant")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<UnifiedPaymentToken> unifiedPaymentTokens = new HashSet<>();
 
     @ManyToMany
@@ -144,31 +140,6 @@ public class Merchant implements Serializable {
 
     public void setPaymentMethodCredentials(Set<PaymentMethodCredential> paymentMethodCredentials) {
         this.paymentMethodCredentials = paymentMethodCredentials;
-    }
-
-    public Set<PaymentMethodToken> getPaymentMethodTokens() {
-        return paymentMethodTokens;
-    }
-
-    public Merchant paymentMethodTokens(Set<PaymentMethodToken> paymentMethodTokens) {
-        this.paymentMethodTokens = paymentMethodTokens;
-        return this;
-    }
-
-    public Merchant addPaymentMethodToken(PaymentMethodToken paymentMethodToken) {
-        this.paymentMethodTokens.add(paymentMethodToken);
-        paymentMethodToken.setMerchant(this);
-        return this;
-    }
-
-    public Merchant removePaymentMethodToken(PaymentMethodToken paymentMethodToken) {
-        this.paymentMethodTokens.remove(paymentMethodToken);
-        paymentMethodToken.setMerchant(null);
-        return this;
-    }
-
-    public void setPaymentMethodTokens(Set<PaymentMethodToken> paymentMethodTokens) {
-        this.paymentMethodTokens = paymentMethodTokens;
     }
 
     public Set<UnifiedPaymentToken> getUnifiedPaymentTokens() {

@@ -68,14 +68,6 @@
       "ownerSide": true
     },
     {
-      "relationshipType": "one-to-one",
-      "otherEntityName": "paymentMethodToken",
-      "otherEntityRelationshipName": "transaction",
-      "relationshipName": "paymentMethodToken",
-      "otherEntityField": "id",
-      "ownerSide": true
-    },
-    {
       "relationshipType": "many-to-one",
       "otherEntityName": "paymentMethod",
       "otherEntityRelationshipName": "transaction",

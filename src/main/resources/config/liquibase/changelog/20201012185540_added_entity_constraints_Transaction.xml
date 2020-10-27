@@ -26,12 +26,6 @@
                                  referencedColumnNames="id"
                                  referencedTableName="unified_payment_token"/>
 
-        <addForeignKeyConstraint baseColumnNames="payment_method_token_id"
-                                 baseTableName="transaction"
-                                 constraintName="fk_transaction_payment_method_token_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="payment_method_token"/>
-
         <addForeignKeyConstraint baseColumnNames="payment_method_id"
                                  baseTableName="transaction"
                                  constraintName="fk_transaction_payment_method_id"

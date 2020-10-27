@@ -43,9 +43,6 @@
             <column name="unified_payment_token_id" type="bigint">
                 <constraints unique="true" nullable="false" uniqueConstraintName="ux_transaction_unified_payment_token_id" />
             </column>
-            <column name="payment_method_token_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_transaction_payment_method_token_id" />
-            </column>
             <column name="payment_method_id" type="bigint">
                 <constraints nullable="false" />
             </column>

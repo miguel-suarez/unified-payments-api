@@ -28,12 +28,6 @@
     },
     {
       "relationshipType": "one-to-many",
-      "otherEntityName": "paymentMethodToken",
-      "otherEntityRelationshipName": "merchant",
-      "relationshipName": "paymentMethodToken"
-    },
-    {
-      "relationshipType": "one-to-many",
       "otherEntityName": "unifiedPaymentToken",
       "otherEntityRelationshipName": "merchant",
       "relationshipName": "unifiedPaymentToken"

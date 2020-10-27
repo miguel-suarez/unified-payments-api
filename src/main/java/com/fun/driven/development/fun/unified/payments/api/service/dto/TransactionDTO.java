@@ -41,8 +41,6 @@ public class TransactionDTO implements Serializable {
 
     private Long unifiedPaymentTokenId;
 
-    private Long paymentMethodTokenId;
-
     private Long paymentMethodId;
 
     public Long getId() {
@@ -133,14 +131,6 @@ public class TransactionDTO implements Serializable {
         this.unifiedPaymentTokenId = unifiedPaymentTokenId;
     }
 
-    public Long getPaymentMethodTokenId() {
-        return paymentMethodTokenId;
-    }
-
-    public void setPaymentMethodTokenId(Long paymentMethodTokenId) {
-        this.paymentMethodTokenId = paymentMethodTokenId;
-    }
-
     public Long getPaymentMethodId() {
         return paymentMethodId;
     }
@@ -181,7 +171,6 @@ public class TransactionDTO implements Serializable {
             ", merchantId=" + getMerchantId() +
             ", currencyId=" + getCurrencyId() +
             ", unifiedPaymentTokenId=" + getUnifiedPaymentTokenId() +
-            ", paymentMethodTokenId=" + getPaymentMethodTokenId() +
             ", paymentMethodId=" + getPaymentMethodId() +
             "}";
     }

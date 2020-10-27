@@ -13,8 +13,6 @@ public interface MerchantMapper extends EntityMapper<MerchantDTO, Merchant> {
 
     @Mapping(target = "paymentMethodCredentials", ignore = true)
     @Mapping(target = "removePaymentMethodCredential", ignore = true)
-    @Mapping(target = "paymentMethodTokens", ignore = true)
-    @Mapping(target = "removePaymentMethodToken", ignore = true)
     @Mapping(target = "unifiedPaymentTokens", ignore = true)
     @Mapping(target = "removeUnifiedPaymentToken", ignore = true)
     @Mapping(target = "removeUser", ignore = true)

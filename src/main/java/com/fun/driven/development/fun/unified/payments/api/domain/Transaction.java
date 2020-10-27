@@ -23,9 +23,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 
-/**
- * A Transaction.
- */
 @Entity
 @Table(name = "transaction")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -81,10 +78,6 @@ public class Transaction implements Serializable {
     @NotNull
     @JoinColumn(unique = true)
     private UnifiedPaymentToken unifiedPaymentToken;
-
-    @OneToOne
-    @JoinColumn(unique = true)
-    private PaymentMethodToken paymentMethodToken;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -228,19 +221,6 @@ public class Transaction implements Serializable {
 
     public void setUnifiedPaymentToken(UnifiedPaymentToken unifiedPaymentToken) {
         this.unifiedPaymentToken = unifiedPaymentToken;
-    }
-
-    public PaymentMethodToken getPaymentMethodToken() {
-        return paymentMethodToken;
-    }
-
-    public Transaction paymentMethodToken(PaymentMethodToken paymentMethodToken) {
-        this.paymentMethodToken = paymentMethodToken;
-        return this;
-    }
-
-    public void setPaymentMethodToken(PaymentMethodToken paymentMethodToken) {
-        this.paymentMethodToken = paymentMethodToken;
     }
 
     public PaymentMethod getPaymentMethod() {
