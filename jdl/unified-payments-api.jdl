@@ -20,7 +20,7 @@ entity PaymentMethod {
 }
 
 entity PaymentMethodCredential {
-    apiKey String required maxlength(500),
+    credentials String required maxlength(1000),
     validUntil Instant,
 }
 
@@ -34,14 +34,6 @@ entity PaymentMethodUnavailable {
 	type UnavailableType required,
     from Instant required,
     until Instant,
-}
-
-/**
- * Payment Method propietary token
- */
-entity PaymentMethodToken {
-    token String required maxlength(500) unique,
-    validUntil Instant,
 }
 
 /**
@@ -98,10 +90,6 @@ relationship OneToMany {
 }
 
 relationship OneToMany {
-    Merchant{paymentMethodToken} to PaymentMethodToken{merchant required}
-}
-
-relationship OneToMany {
     Merchant{unifiedPaymentToken} to UnifiedPaymentToken{merchant required}
 }
 
@@ -119,10 +107,6 @@ relationship ManyToOne {
 
 relationship OneToOne {
     Transaction{unifiedPaymentToken required} to UnifiedPaymentToken
-}
-
-relationship OneToOne {
-    Transaction{paymentMethodToken} to PaymentMethodToken
 }
 
 relationship OneToMany {
