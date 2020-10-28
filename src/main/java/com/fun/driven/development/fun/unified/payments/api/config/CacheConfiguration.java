@@ -53,14 +53,12 @@ public class CacheConfiguration {
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Merchant.class.getName() + ".users");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Merchant.class.getName() + ".paymentMethods");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Merchant.class.getName() + ".paymentMethodCredentials");
-            createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Merchant.class.getName() + ".paymentMethodTokens");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Merchant.class.getName() + ".unifiedPaymentTokens");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethod.class.getName());
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethod.class.getName() + ".paymentMethodUnavailables");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethod.class.getName() + ".paymentMethodCredentials");
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethodCredential.class.getName());
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethodUnavailable.class.getName());
-            createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethodToken.class.getName());
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.UnifiedPaymentToken.class.getName());
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.Transaction.class.getName());
             createCache(cm, com.fun.driven.development.fun.unified.payments.api.domain.PaymentMethod.class.getName() + ".merchants");
