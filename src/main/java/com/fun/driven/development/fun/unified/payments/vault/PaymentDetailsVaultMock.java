@@ -1,6 +1,9 @@
 package com.fun.driven.development.fun.unified.payments.vault;
 
-public class PaymentDetailsVaultMock {
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentDetailsVaultMock implements PaymentDetailsVault {
 
     public UnifiedToken tokenize(Card card) {
         //TODO implement
@@ -9,8 +12,8 @@ public class PaymentDetailsVaultMock {
 
     public Card retrieveCard(UnifiedToken token) {
         //TODO implement
-        return new Card().setNumber("4111111111111112")
-                         .setExpirationMonth("05")
-                         .setExpirationYear("2030");
+        return new Card().setNumber("4111111111111111")
+                         .setExpirationMonth(5)
+                         .setExpirationYear(2030);
     }
 }

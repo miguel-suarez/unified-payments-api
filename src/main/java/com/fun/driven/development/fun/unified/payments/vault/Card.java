@@ -7,9 +7,9 @@ public class Card {
     @NotNull
     private String number;
     @NotNull
-    private String expirationMonth;
+    private Integer expirationMonth;
     @NotNull
-    private String expirationYear;
+    private Integer expirationYear;
 
     public String getNumber() {
         return number;
@@ -20,16 +20,16 @@ public class Card {
         return this;
     }
 
-    public String getExpirationMonth() {
+    public Integer getExpirationMonth() {
         return expirationMonth;
     }
 
-    public Card setExpirationMonth(String expirationMonth) {
+    public Card setExpirationMonth(Integer expirationMonth) {
         this.expirationMonth = expirationMonth;
         return this;
     }
 
-    public String getExpirationYear() {
+    public Integer getExpirationYear() {
         return expirationYear;
     }
 
@@ -37,7 +37,7 @@ public class Card {
         return String.format("%02d", expirationMonth) + "/" + String.format("%04d", expirationYear);
     }
 
-    public Card setExpirationYear(String expirationYear) {
+    public Card setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
         return this;
     }
