@@ -122,7 +122,7 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         return result;
     }
 
-    public BraintreeCredentials parseMerchantCredentials(SaleRequest request) {
+    private BraintreeCredentials parseMerchantCredentials(SaleRequest request) {
         String credentialsJson = request.getMerchantCredentialsJson();
 
         if (StringUtils.isEmpty(credentialsJson)) {
