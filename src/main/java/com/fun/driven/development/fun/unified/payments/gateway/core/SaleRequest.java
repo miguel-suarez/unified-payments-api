@@ -18,8 +18,9 @@ public class SaleRequest {
         return reference;
     }
 
-    public void setReference(String reference) {
+    public SaleRequest setReference(String reference) {
         this.reference = reference;
+        return this;
     }
 
     public UnifiedToken getToken() {

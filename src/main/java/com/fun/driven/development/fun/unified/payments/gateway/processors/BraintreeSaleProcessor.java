@@ -6,6 +6,11 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.ValidationError;
+import com.braintreegateway.exceptions.AuthenticationException;
+import com.braintreegateway.exceptions.AuthorizationException;
+import com.braintreegateway.exceptions.BraintreeException;
+import com.braintreegateway.exceptions.RequestTimeoutException;
+import com.braintreegateway.exceptions.TooManyRequestsException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleProcessor;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
@@ -19,13 +24,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Profiles;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest, Result<Transaction>, BraintreeCredentials> {
+@Service
+public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest, Pair<Result<Transaction>, String>, BraintreeCredentials> {
 
     private static final Logger log = LoggerFactory.getLogger(BraintreeSaleProcessor.class);
 
@@ -58,21 +66,47 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
     }
 
     @Override
-    public Result<Transaction> thirdPartySale(TransactionRequest request, BraintreeCredentials credentials) {
+    public Pair<Result<Transaction>, String> thirdPartySale(TransactionRequest request, BraintreeCredentials credentials) {
         //TODO once we have a production ready Braintree account we should use the
         // function loadEnvironment to use the Sandbox or Production environment.
         BraintreeGateway gateway = new BraintreeGateway(Environment.SANDBOX,
                                                         credentials.getMerchantId(),
                                                         credentials.getPublicKey(),
                                                         credentials.getPrivateKey());
-        return gateway.transaction().sale(request);
+        Result<Transaction> result = new Result<>();
+        String errorMessage = "";
+        try {
+            result = gateway.transaction().sale(request);
+        } catch (AuthenticationException e) {
+            log.error("Authentication error while processing Braintree sale", e);
+            errorMessage = "Authentication error, please check Braintree merchant credentials";
+        } catch (AuthorizationException e) {
+            log.error("Authorization error while processing Braintree sale", e);
+            errorMessage = "Authorization error, please check Braintree merchant credentials";
+        } catch (RequestTimeoutException e) {
+            log.error("Timeout error while processing Braintree sale", e);
+            errorMessage = "Timeout error, please retry the transaction";
+        } catch (TooManyRequestsException e) {
+            log.error("Too many requests error while processing Braintree sale", e);
+            errorMessage = "Too many requests, please retry the transaction in a few seconds, " +
+                "or select a different payment method";
+        } catch (BraintreeException e) {
+            log.error("Error while processing Braintree sale", e);
+            errorMessage = "Braintree is experiencing platform issues, please select a different payment method.";
+        }
+
+        return Pair.of(result, errorMessage);
     }
 
     @Override
-    public SaleResult toUnifiedResult(Result<Transaction> thirdPartyResult) {
+    public SaleResult toUnifiedResult(Pair<Result<Transaction>, String> resultOrError) {
         SaleResult result;
+        Result<Transaction> thirdPartyResult = resultOrError.getFirst();
+        String error = resultOrError.getSecond();
 
-        if (thirdPartyResult.isSuccess()) {
+        if (StringUtils.hasText(error)) {
+            result = buildErrorResult(error);
+        } else if (thirdPartyResult.isSuccess()) {
             result = buildAuthorizedResult(thirdPartyResult);
         } else if (thirdPartyResult.getTransaction() != null) {
             result = buildErrorResult(thirdPartyResult);
@@ -104,6 +138,13 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         Transaction transaction = thirdPartyResult.getTarget();
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.AUTHORIZED;
         String message = retrieveResultMessage(resultCode, transaction.getId());
+        return new SaleResult().setResultCode(resultCode)
+                               .setResultDescription(message);
+    }
+
+    private SaleResult buildErrorResult(String thirdPartyError) {
+        SaleResult.ResultCode resultCode = SaleResult.ResultCode.ERROR;
+        String message = retrieveResultMessage(resultCode, thirdPartyError);
         return new SaleResult().setResultCode(resultCode)
                                .setResultDescription(message);
     }
