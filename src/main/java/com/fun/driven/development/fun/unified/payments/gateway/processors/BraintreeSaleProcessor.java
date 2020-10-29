@@ -16,6 +16,7 @@ import com.fun.driven.development.fun.unified.payments.gateway.core.SaleProcesso
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.AmountConverter;
+import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
 import com.fun.driven.development.fun.unified.payments.vault.Card;
 import com.fun.driven.development.fun.unified.payments.vault.PaymentDetailsVault;
 import io.github.jhipster.config.JHipsterConstants;
@@ -45,6 +46,9 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private ReferenceGenerator referenceGenerator;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -138,14 +142,16 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         Transaction transaction = thirdPartyResult.getTarget();
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.AUTHORIZED;
         String message = retrieveResultMessage(resultCode, transaction.getId());
-        return new SaleResult().setResultCode(resultCode)
+        return new SaleResult().setReference(referenceGenerator.generate())
+                               .setResultCode(resultCode)
                                .setResultDescription(message);
     }
 
     private SaleResult buildErrorResult(String thirdPartyError) {
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.ERROR;
         String message = retrieveResultMessage(resultCode, thirdPartyError);
-        return new SaleResult().setResultCode(resultCode)
+        return new SaleResult().setReference(referenceGenerator.generate())
+                               .setResultCode(resultCode)
                                .setResultDescription(message);
     }
 
@@ -155,7 +161,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         //TODO instead of directly returning the third party error code, create a map to internal,
         // curated error codes
         String message = retrieveResultMessage(resultCode, transaction.getProcessorResponseCode());
-        return new SaleResult().setResultCode(resultCode)
+        return new SaleResult().setReference(referenceGenerator.generate())
+                               .setResultCode(resultCode)
                                .setResultDescription(message);
     }
 
@@ -169,7 +176,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         // curated validation errors
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.VALIDATION_ERROR;
         String message = retrieveResultMessage(resultCode, validationMessage);
-        return new SaleResult().setResultCode(resultCode)
+        return new SaleResult().setReference(referenceGenerator.generate())
+                               .setResultCode(resultCode)
                                .setResultDescription(message);
     }
 
