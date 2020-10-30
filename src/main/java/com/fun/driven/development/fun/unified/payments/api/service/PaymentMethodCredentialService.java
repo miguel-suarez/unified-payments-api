@@ -16,5 +16,7 @@ public interface PaymentMethodCredentialService {
 
     Optional<PaymentMethodCredentialDTO> findOne(Long id);
 
+    Optional<PaymentMethodCredentialDTO> findOneByPaymentMethodAndMerchant(Long paymentMethodId, Long merchantId);
+
     void delete(Long id);
 }

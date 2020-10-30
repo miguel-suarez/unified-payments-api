@@ -52,7 +52,14 @@ public class PaymentMethodCredentialServiceImpl implements PaymentMethodCredenti
     public Optional<PaymentMethodCredentialDTO> findOne(Long id) {
         log.debug("Request to get PaymentMethodCredential : {}", id);
         return paymentMethodCredentialRepository.findById(id)
-            .map(paymentMethodCredentialMapper::toDto);
+                                                .map(paymentMethodCredentialMapper::toDto);
+    }
+
+    @Override
+    public Optional<PaymentMethodCredentialDTO> findOneByPaymentMethodAndMerchant(Long paymentMethodId, Long merchantId) {
+        log.debug("Request to get PaymentMethodCredential : {} {}", paymentMethodId, merchantId);
+        return paymentMethodCredentialRepository.findOneByPaymentMethodIdAndMerchantId(paymentMethodId, merchantId)
+                                                .map(paymentMethodCredentialMapper::toDto);
     }
 
     @Override
