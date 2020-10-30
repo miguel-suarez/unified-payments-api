@@ -11,15 +11,15 @@ import java.util.Objects;
 public class PaymentResultVM {
 
     @JsonProperty
-    @ApiModelProperty(example = "Authorized")
+    @ApiModelProperty(example = "AUTHORIZED")
     private ResultCodeEnum resultCode;
 
     @JsonProperty
-    @ApiModelProperty(example = "Sale authorized with code xyz123")
+    @ApiModelProperty(example = "Sale authorized with code b325yb0j.")
     private String resultDescription;
 
     @JsonProperty
-    @ApiModelProperty(example = "")
+    @ApiModelProperty(example = "19999160406806200009")
     private String reference;
 
     public static PaymentResultVM fromSaleResult(SaleResult saleResult) {
