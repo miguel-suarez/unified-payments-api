@@ -1,13 +1,16 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
+import com.fun.driven.development.fun.unified.payments.api.domain.User;
 import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
 import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
 import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
+import com.fun.driven.development.fun.unified.payments.api.service.UserService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMethodCredentialDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.UserDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleVM;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
@@ -45,6 +48,9 @@ public class PaymentResource {
 
     @Autowired
     private MerchantService merchantService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private PaymentMethodCredentialService credentialService;
@@ -108,6 +114,9 @@ public class PaymentResource {
         Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(merchantReference, sale);
         if (badRequest.isPresent()) return badRequest;
 
+        badRequest = validateUserMerchant(merchantReference);
+        if (badRequest.isPresent()) return badRequest;
+
         return validateCurrency(sale);
     }
 
@@ -147,6 +156,23 @@ public class PaymentResource {
             PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
                                                           .resultDescription("Third party credentials are incorrect for required payment method");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateUserMerchant(String merchantReference) {
+        Optional<User> authorizedUser = userService.getUserWithAuthorities();
+        Long authorizedUserId = authorizedUser.isPresent() ? authorizedUser.get().getId() : -1;
+        Optional<MerchantDTO> merchantOptional = merchantService.findOneByReference(merchantReference);
+        MerchantDTO merchantDTO = merchantOptional.isPresent() ? merchantOptional.get() : new MerchantDTO();
+        Optional<UserDTO> userDto = merchantDTO.getUsers()
+                                               .stream()
+                                               .filter(u -> u.getId().equals(authorizedUserId))
+                                               .findFirst();
+        if (userDto.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("User doesn't have enough credentials to access resource");
+            return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body(result));
         }
         return Optional.empty();
     }

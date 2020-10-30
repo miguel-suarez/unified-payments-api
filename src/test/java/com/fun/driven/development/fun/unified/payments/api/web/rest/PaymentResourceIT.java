@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,6 +110,20 @@ public class PaymentResourceIT {
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))
                                     .header(Constants.MERCHANT_HEADER,"atom"))
                            .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    @Transactional
+    @WithUserDetails(value = "admin", userDetailsServiceBeanName = "userDetailsService")
+    void saleWithWrongMerchantUserCombination() throws Exception {
+        SaleVM saleVM = new SaleVM().amountInCents(100L)
+                                    .currencyIsoCode("EUR")
+                                    .token("Racket");
+        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(TestUtil.convertObjectToJsonBytes(saleVM))
+                                    .header(Constants.MERCHANT_HEADER,"hardware"))
+                           .andExpect(status().isForbidden());
     }
 
     @Test
