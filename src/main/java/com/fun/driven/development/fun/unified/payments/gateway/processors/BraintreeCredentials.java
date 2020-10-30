@@ -9,7 +9,7 @@ public class BraintreeCredentials {
         return merchantId;
     }
 
-    public BraintreeCredentials setMerchantId(String merchantId) {
+    public BraintreeCredentials merchantId(String merchantId) {
         this.merchantId = merchantId;
         return this;
     }
@@ -18,7 +18,7 @@ public class BraintreeCredentials {
         return publicKey;
     }
 
-    public BraintreeCredentials setPublicKey(String publicKey) {
+    public BraintreeCredentials publicKey(String publicKey) {
         this.publicKey = publicKey;
         return this;
     }
@@ -27,7 +27,7 @@ public class BraintreeCredentials {
         return privateKey;
     }
 
-    public BraintreeCredentials setPrivateKey(String privateKey) {
+    public BraintreeCredentials privateKey(String privateKey) {
         this.privateKey = privateKey;
         return this;
     }

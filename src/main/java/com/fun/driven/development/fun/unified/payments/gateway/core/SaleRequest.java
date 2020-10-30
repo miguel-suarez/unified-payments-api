@@ -18,7 +18,7 @@ public class SaleRequest {
         return reference;
     }
 
-    public SaleRequest setReference(String reference) {
+    public SaleRequest reference(String reference) {
         this.reference = reference;
         return this;
     }
@@ -27,7 +27,7 @@ public class SaleRequest {
         return token;
     }
 
-    public SaleRequest setToken(UnifiedToken token) {
+    public SaleRequest token(UnifiedToken token) {
         this.token = token;
         return this;
     }
@@ -36,7 +36,7 @@ public class SaleRequest {
         return amountInCents;
     }
 
-    public SaleRequest setAmountInCents(Long amountInCents) {
+    public SaleRequest amountInCents(Long amountInCents) {
         this.amountInCents = amountInCents;
         return this;
     }
@@ -45,7 +45,7 @@ public class SaleRequest {
         return currencyIsoCode;
     }
 
-    public SaleRequest setCurrencyIsoCode(String currencyIsoCode) {
+    public SaleRequest currencyIsoCode(String currencyIsoCode) {
         this.currencyIsoCode = currencyIsoCode;
         return this;
     }
@@ -54,7 +54,7 @@ public class SaleRequest {
         return merchantCredentialsJson;
     }
 
-    public SaleRequest setMerchantCredentialsJson(String merchantCredentialsJson) {
+    public SaleRequest merchantCredentialsJson(String merchantCredentialsJson) {
         this.merchantCredentialsJson = merchantCredentialsJson;
         return this;
     }

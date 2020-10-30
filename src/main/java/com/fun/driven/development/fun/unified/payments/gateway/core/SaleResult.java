@@ -22,7 +22,11 @@ public class SaleResult {
         return reference;
     }
 
-    public SaleResult setReference(String reference) {
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public SaleResult reference(String reference) {
         this.reference = reference;
         return this;
     }
@@ -31,7 +35,11 @@ public class SaleResult {
         return resultCode;
     }
 
-    public SaleResult setResultCode(ResultCode resultCode) {
+    public void setResultCode(ResultCode resultCode) {
+        this.resultCode = resultCode;
+    }
+
+    public SaleResult resultCode(ResultCode resultCode) {
         this.resultCode = resultCode;
         return this;
     }
@@ -40,7 +48,11 @@ public class SaleResult {
         return resultDescription;
     }
 
-    public SaleResult setResultDescription(String resultDescription) {
+    public void setResultDescription(String resultDescription) {
+        this.resultDescription = resultDescription;
+    }
+
+    public SaleResult resultDescription(String resultDescription) {
         this.resultDescription = resultDescription;
         return this;
     }
