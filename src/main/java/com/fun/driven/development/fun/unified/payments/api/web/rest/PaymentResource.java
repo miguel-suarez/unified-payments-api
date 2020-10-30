@@ -122,13 +122,15 @@ public class PaymentResource {
 
     private Pair<AvailableProcessor, SaleRequest> buildSaleRequest(String merchantReference, SaleVM request) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
         Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
+        Long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
         Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(
-                                                                                processor.get().getPaymentMethodId(),
-                                                                                merchantDTO.get().getId());
+                                                                                paymentMethodId, merchantId);
+        String credentialJson = credential.isPresent() ? credential.get().getCredentials() : "";
         String reference = referenceGenerator.generate();
         SaleRequest saleRequest = request.toSaleRequest(reference)
-                                         .merchantCredentialsJson(credential.get().getCredentials())
+                                         .merchantCredentialsJson(credentialJson)
                                          .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
     }
@@ -164,7 +166,7 @@ public class PaymentResource {
         Optional<User> authorizedUser = userService.getUserWithAuthorities();
         Long authorizedUserId = authorizedUser.isPresent() ? authorizedUser.get().getId() : -1;
         Optional<MerchantDTO> merchantOptional = merchantService.findOneByReference(merchantReference);
-        MerchantDTO merchantDTO = merchantOptional.isPresent() ? merchantOptional.get() : new MerchantDTO();
+        MerchantDTO merchantDTO = merchantOptional.orElseGet(MerchantDTO::new);
         Optional<UserDTO> userDto = merchantDTO.getUsers()
                                                .stream()
                                                .filter(u -> u.getId().equals(authorizedUserId))
