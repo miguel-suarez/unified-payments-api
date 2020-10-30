@@ -56,6 +56,11 @@ public class PaymentResultVM {
         return this;
     }
 
+    public boolean isOK() {
+        return resultCode.equals(ResultCodeEnum.AUTHORIZED) ||
+               resultCode.equals(ResultCodeEnum.SUCCESS);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

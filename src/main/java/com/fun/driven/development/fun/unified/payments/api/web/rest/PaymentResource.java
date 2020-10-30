@@ -15,7 +15,6 @@ import com.fun.driven.development.fun.unified.payments.gateway.core.PaymentGatew
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
-import io.github.jhipster.web.util.HeaderUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,6 +23,7 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,16 +33,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 @RestController
 @Api(value = "token")
 @RequestMapping("/api")
 public class PaymentResource {
-
-    private static final String ENTITY_NAME = "payment";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -81,40 +77,32 @@ public class PaymentResource {
                   authorizations = {@Authorization(value = "basic_auth")},
                   tags={ "payment" })
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Successfully created", response = PaymentResultVM.class),
+        @ApiResponse(code = 200, message = "Successfully processed", response = PaymentResultVM.class),
         @ApiResponse(code = 400, message = "Invalid input data supplied"),
         @ApiResponse(code = 401, message = "Authentication information is missing or invalid"),
         @ApiResponse(code = 403, message = "User isn't allow to perform the requested action"),
-        @ApiResponse(code = 500, message = "Sorry we can't process this request at the moment") })
+        @ApiResponse(code = 500, message = "Sorry we can't process this request at the moment"),
+        @ApiResponse(code = 502, message = "Invalid response received from third party server")})
     @PostMapping(value = "/v1/unified/payments/sale",
         produces = { "application/json" },
         consumes = { "application/json" })
     public ResponseEntity<PaymentResultVM> submitSale(@ApiParam(required=true)
                                                         @RequestHeader(value="X-Unified-Payments-Merchant-Reference") String merchantReference,
                                                       @ApiParam(value = "Details of the sale payment", required=true )
-                                                        @Valid @RequestBody SaleVM request)
-                                                throws URISyntaxException {
+                                                        @Valid @RequestBody SaleVM request) {
         Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, request);
-        //TODO validate credentials and processor
         if (validationError.isPresent()) return validationError.get();
 
-        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
-        AvailableProcessor processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
-        Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(merchantDTO.get().getId(),
-                                                                                                              processor.getPaymentMethodId());
-        String reference = referenceGenerator.generate();
-        SaleRequest saleRequest = request.toSaleRequest(reference)
-                                         .merchantCredentialsJson(credential.get().getCredentials());
-        SaleResult saleResult = paymentGateway.using(processor).sale(saleRequest);
+        Pair<AvailableProcessor, SaleRequest> requestPair = buildSaleRequest(merchantReference, request);
+        SaleResult saleResult = paymentGateway.using(requestPair.getFirst()).sale(requestPair.getSecond());
         PaymentResultVM result = PaymentResultVM.fromSaleResult(saleResult);
 
-        return ResponseEntity.created(new URI("/api/v1/unified/payments/sale/" + saleResult.getResultCode()))
-                             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, saleResult.getResultCode().toString()))
-                             .body(result);
+        if (result.isOK()) return ResponseEntity.ok().body(result);
+        return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
     }
 
     private Optional<ResponseEntity<PaymentResultVM>> validateInput(String merchantReference, SaleVM sale) {
-        Optional<ResponseEntity<PaymentResultVM>> unauthorized = validateMerchantReference(merchantReference);
+        Optional<ResponseEntity<PaymentResultVM>> unauthorized = validateMerchant(merchantReference, sale);
         if (unauthorized.isPresent()) return unauthorized;
 
         Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(sale);
@@ -123,12 +111,41 @@ public class PaymentResource {
         return validateCurrency(sale);
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateMerchantReference(String merchantReference) {
+    private Pair<AvailableProcessor, SaleRequest> buildSaleRequest(String merchantReference, SaleVM request) {
+        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
+        Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(
+                                                                                processor.get().getPaymentMethodId(),
+                                                                                merchantDTO.get().getId());
+        String reference = referenceGenerator.generate();
+        SaleRequest saleRequest = request.toSaleRequest(reference)
+                                         .merchantCredentialsJson(credential.get().getCredentials());
+        return Pair.of(processor.get(), saleRequest);
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateMerchant(String merchantReference, SaleVM sale) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
         if (merchantDTO.isEmpty()) {
             PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
                                                           .resultDescription("Authentication information is missing or invalid");
             return Optional.of(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result));
+        }
+
+        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(sale.getPaymentProcessor());
+        if (processor.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("Invalid payment processor supplied");
+            return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
+        }
+
+        Long merchantId = merchantDTO.get().getId();
+        Long paymentMethodId = processor.get().getPaymentMethodId();
+        Optional<PaymentMethodCredentialDTO> credentialDTO = credentialService.findOneByPaymentMethodAndMerchant(paymentMethodId, merchantId);
+
+        if (credentialDTO.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("Third party credentials are incorrect for required payment method");
+            return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
         return Optional.empty();
     }
