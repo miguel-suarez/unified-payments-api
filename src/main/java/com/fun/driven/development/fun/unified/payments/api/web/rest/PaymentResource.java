@@ -1,5 +1,11 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
+import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
+import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
+import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleVM;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -9,17 +15,20 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @RestController
 @Api(value = "token")
@@ -30,6 +39,15 @@ public class PaymentResource {
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
+
+    @Autowired
+    private MerchantService merchantService;
+
+    @Autowired
+    private UnifiedPaymentTokenService tokenService;
+
+    @Autowired
+    private CurrencyService currencyService;
 
     /**
      * POST /v1/unified/payments/sale : Submits a sale payment request
@@ -43,7 +61,7 @@ public class PaymentResource {
      *         or Sorry we can&#39;t process this request at the moment (status code 500)
      */
     @ApiOperation(value = "Submits a sale payment request", nickname = "submitSale",
-                  notes = "", response = PaymentResultVM.class,
+                  response = PaymentResultVM.class,
                   authorizations = {@Authorization(value = "basic_auth")},
                   tags={ "payment" })
     @ApiResponses(value = {
@@ -52,19 +70,61 @@ public class PaymentResource {
         @ApiResponse(code = 401, message = "Authentication information is missing or invalid"),
         @ApiResponse(code = 403, message = "User isn't allow to perform the requested action"),
         @ApiResponse(code = 500, message = "Sorry we can't process this request at the moment") })
-    @RequestMapping(value = "/v1/unified/payments/sale",
+    @PostMapping(value = "/v1/unified/payments/sale",
         produces = { "application/json" },
-        consumes = { "application/json" },
-        method = RequestMethod.POST)
+        consumes = { "application/json" })
     public ResponseEntity<PaymentResultVM> submitSale(@ApiParam(required=true)
                                                         @RequestHeader(value="X-Unified-Payments-Merchant-Reference") String merchantReference,
                                                       @ApiParam(value = "Details of the sale payment", required=true )
                                                         @Valid @RequestBody SaleVM sale)
                                                 throws URISyntaxException {
-        PaymentResultVM result = new PaymentResultVM();
-        result.setResultCode(PaymentResultVM.ResultCodeEnum.SUCCESS);
+        Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, sale);
+        if (validationError.isPresent()) return validationError.get();
+
+        PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.SUCCESS)
+                                                      .resultDescription("Successfully created");
         return ResponseEntity.created(new URI("/api/v1/unified/payments/sale/" + result.getResultCode()))
                              .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getResultCode().toString()))
                              .body(result);
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateInput(String merchantReference, SaleVM sale) {
+        Optional<ResponseEntity<PaymentResultVM>> unauthorized = validateMerchantReference(merchantReference);
+        if (unauthorized.isPresent()) return unauthorized;
+
+        Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(sale);
+        if (badRequest.isPresent()) return badRequest;
+
+        return validateCurrency(sale);
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateMerchantReference(String merchantReference) {
+        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        if (merchantDTO.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("Authentication information is missing or invalid");
+            return Optional.of(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateToken(SaleVM sale) {
+        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByToken(sale.getToken());
+        if (tokenDTO.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("Invalid token supplied");
+            return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<ResponseEntity<PaymentResultVM>> validateCurrency(SaleVM sale) {
+        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(sale.getCurrencyIsoCode());
+        if (currencyDTO.isEmpty()) {
+            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                          .resultDescription("Invalid currency code supplied");
+            return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
+        }
+        return Optional.empty();
     }
 }
