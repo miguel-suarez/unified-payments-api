@@ -69,13 +69,19 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
     public Pair<Result<Transaction>, String> thirdPartySale(TransactionRequest request, BraintreeCredentials credentials) {
         //TODO once we have a production ready Braintree account we should use the
         // function loadEnvironment to use the Sandbox or Production environment.
-        BraintreeGateway gateway = new BraintreeGateway(Environment.SANDBOX,
-                                                        credentials.getMerchantId(),
-                                                        credentials.getPublicKey(),
-                                                        credentials.getPrivateKey());
         Result<Transaction> result = new Result<>();
         String errorMessage = "";
+
+        if (credentials.areEmpty()) {
+            errorMessage = "Braintree configuration incorrect, please check Braintree merchant credentials.";
+            return Pair.of(result, errorMessage);
+        }
+
         try {
+            BraintreeGateway gateway = new BraintreeGateway(Environment.SANDBOX,
+                                                            credentials.getMerchantId(),
+                                                            credentials.getPublicKey(),
+                                                            credentials.getPrivateKey());
             result = gateway.transaction().sale(request);
         } catch (AuthenticationException e) {
             log.error("Authentication error while processing Braintree sale", e);
@@ -187,6 +193,7 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
     }
 
     //TODO Unused method, but will be needed when the project goes live processing real transactions
+    @SuppressWarnings("unused")
     private Environment loadEnvironment() {
         Environment environment;
         if (env.acceptsProfiles(Profiles.of(JHipsterConstants.SPRING_PROFILE_PRODUCTION))) {
