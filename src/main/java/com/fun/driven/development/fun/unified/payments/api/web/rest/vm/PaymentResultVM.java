@@ -8,132 +8,102 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 public class PaymentResultVM {
-  /**
-   * Gets or Sets resultCode
-   */
-  public enum ResultCodeEnum {
-    CANCELLED("Cancelled"),
 
-    ERROR("Error"),
+    @JsonProperty
+    @ApiModelProperty(example = "Success", value = "")
+    private ResultCodeEnum resultCode;
 
-    PENDING("Pending"),
+    @JsonProperty
+    @ApiModelProperty(example = "Payment successful", value = "")
+    private String resultDescription;
 
-    REFUSED("Refused"),
-
-    SUCCESS("Success");
-
-    private String value;
-
-    ResultCodeEnum(String value) {
-      this.value = value;
+    public PaymentResultVM resultCode(ResultCodeEnum resultCode) {
+        this.resultCode = resultCode;
+        return this;
     }
 
-    @JsonValue
-    public String getValue() {
-      return value;
+    public ResultCodeEnum getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(ResultCodeEnum resultCode) {
+        this.resultCode = resultCode;
+    }
+
+    public PaymentResultVM resultDescription(String resultDescription) {
+        this.resultDescription = resultDescription;
+        return this;
+    }
+
+    public String getResultDescription() {
+        return resultDescription;
+    }
+
+    public void setResultDescription(String resultDescription) {
+        this.resultDescription = resultDescription;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PaymentResultVM paymentResult = (PaymentResultVM) o;
+        return Objects.equals(this.resultCode, paymentResult.resultCode) && Objects.equals(this.resultDescription, paymentResult.resultDescription);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(resultCode, resultDescription);
     }
 
     @Override
     public String toString() {
-      return String.valueOf(value);
+        return "PaymentResultVM{" + "resultCode=" + resultCode +
+            ", resultDescription='" + resultDescription + '\'' + '}';
     }
 
-    @JsonCreator
-    public static ResultCodeEnum fromValue(String value) {
-      for (ResultCodeEnum b : ResultCodeEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
+    public enum ResultCodeEnum {
+        CANCELLED("Cancelled"),
+
+        ERROR("Error"),
+
+        PENDING("Pending"),
+
+        REFUSED("Refused"),
+
+        SUCCESS("Success"),
+
+        VALIDATION_ERROR("ValidationError");
+
+        private String value;
+
+        ResultCodeEnum(String value) {
+            this.value = value;
         }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+
+        @JsonCreator
+        public static ResultCodeEnum fromValue(String value) {
+            for (ResultCodeEnum b : ResultCodeEnum.values()) {
+                if (b.value.equals(value)) {
+                    return b;
+                }
+            }
+            throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        }
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
-  }
-
-  @JsonProperty("resultCode")
-  private ResultCodeEnum resultCode;
-
-  @JsonProperty("resultDescription")
-  private String resultDescription;
-
-  public PaymentResultVM resultCode(ResultCodeEnum resultCode) {
-    this.resultCode = resultCode;
-    return this;
-  }
-
-  /**
-   * Get resultCode
-   * @return resultCode
-  */
-  @ApiModelProperty(example = "Success", value = "")
-
-
-  public ResultCodeEnum getResultCode() {
-    return resultCode;
-  }
-
-  public void setResultCode(ResultCodeEnum resultCode) {
-    this.resultCode = resultCode;
-  }
-
-  public PaymentResultVM resultDescription(String resultDescription) {
-    this.resultDescription = resultDescription;
-    return this;
-  }
-
-  /**
-   * Get resultDescription
-   * @return resultDescription
-  */
-  @ApiModelProperty(example = "Payment successful", value = "")
-
-
-  public String getResultDescription() {
-    return resultDescription;
-  }
-
-  public void setResultDescription(String resultDescription) {
-    this.resultDescription = resultDescription;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    PaymentResultVM paymentResult = (PaymentResultVM) o;
-    return Objects.equals(this.resultCode, paymentResult.resultCode) &&
-        Objects.equals(this.resultDescription, paymentResult.resultDescription);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(resultCode, resultDescription);
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class PaymentResult {\n");
-
-    sb.append("    resultCode: ").append(toIndentedString(resultCode)).append("\n");
-    sb.append("    resultDescription: ").append(toIndentedString(resultDescription)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
 }
 
