@@ -58,7 +58,15 @@ public class MerchantServiceImpl implements MerchantService {
     public Optional<MerchantDTO> findOne(Long id) {
         log.debug("Request to get Merchant : {}", id);
         return merchantRepository.findOneWithEagerRelationships(id)
-            .map(merchantMapper::toDto);
+                                 .map(merchantMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<MerchantDTO> findOneByReference(String reference) {
+        log.debug("Request to get Merchant : {}", reference);
+        return merchantRepository.findOneWithEagerRelationshipsByReference(reference)
+                                 .map(merchantMapper::toDto);
     }
 
     @Override

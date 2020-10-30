@@ -16,5 +16,7 @@ public interface CurrencyService {
 
     Optional<CurrencyDTO> findOne(Long id);
 
+    Optional<CurrencyDTO> findOneByIsoCode(String isoCode);
+
     void delete(Long id);
 }

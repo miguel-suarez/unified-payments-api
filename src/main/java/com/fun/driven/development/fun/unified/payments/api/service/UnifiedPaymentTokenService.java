@@ -16,5 +16,7 @@ public interface UnifiedPaymentTokenService {
 
     Optional<UnifiedPaymentTokenDTO> findOne(Long id);
 
+    Optional<UnifiedPaymentTokenDTO> findOneByToken(String token);
+
     void delete(Long id);
 }

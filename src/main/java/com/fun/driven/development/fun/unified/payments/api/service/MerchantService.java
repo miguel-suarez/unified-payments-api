@@ -20,5 +20,7 @@ public interface MerchantService {
 
     Optional<MerchantDTO> findOne(Long id);
 
+    Optional<MerchantDTO> findOneByReference(String reference);
+
     void delete(Long id);
 }

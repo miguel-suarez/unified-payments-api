@@ -52,7 +52,14 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Optional<CurrencyDTO> findOne(Long id) {
         log.debug("Request to get Currency : {}", id);
         return currencyRepository.findById(id)
-            .map(currencyMapper::toDto);
+                                 .map(currencyMapper::toDto);
+    }
+
+    @Override
+    public Optional<CurrencyDTO> findOneByIsoCode(String isoCode) {
+        log.debug("Request to get Currency : {}", isoCode);
+        return currencyRepository.findByIsoCode(isoCode)
+                                 .map(currencyMapper::toDto);
     }
 
     @Override

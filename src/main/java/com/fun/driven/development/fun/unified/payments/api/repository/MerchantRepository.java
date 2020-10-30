@@ -23,4 +23,10 @@ public interface MerchantRepository extends JpaRepository<Merchant, Long> {
 
     @Query("select merchant from Merchant merchant left join fetch merchant.users left join fetch merchant.paymentMethods where merchant.id =:id")
     Optional<Merchant> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select merchant from Merchant merchant " +
+           "left join fetch merchant.users " +
+           "left join fetch merchant.paymentMethods " +
+           "where merchant.reference =:reference")
+    Optional<Merchant> findOneWithEagerRelationshipsByReference(@Param("reference") String reference);
 }

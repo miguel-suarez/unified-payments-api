@@ -25,7 +25,8 @@ public class UnifiedPaymentTokenServiceImpl implements UnifiedPaymentTokenServic
 
     private final UnifiedPaymentTokenMapper unifiedPaymentTokenMapper;
 
-    public UnifiedPaymentTokenServiceImpl(UnifiedPaymentTokenRepository unifiedPaymentTokenRepository, UnifiedPaymentTokenMapper unifiedPaymentTokenMapper) {
+    public UnifiedPaymentTokenServiceImpl(UnifiedPaymentTokenRepository unifiedPaymentTokenRepository,
+                                          UnifiedPaymentTokenMapper unifiedPaymentTokenMapper) {
         this.unifiedPaymentTokenRepository = unifiedPaymentTokenRepository;
         this.unifiedPaymentTokenMapper = unifiedPaymentTokenMapper;
     }
@@ -52,7 +53,14 @@ public class UnifiedPaymentTokenServiceImpl implements UnifiedPaymentTokenServic
     public Optional<UnifiedPaymentTokenDTO> findOne(Long id) {
         log.debug("Request to get UnifiedPaymentToken : {}", id);
         return unifiedPaymentTokenRepository.findById(id)
-            .map(unifiedPaymentTokenMapper::toDto);
+                                            .map(unifiedPaymentTokenMapper::toDto);
+    }
+
+    @Override
+    public Optional<UnifiedPaymentTokenDTO> findOneByToken(String token) {
+        log.debug("Request to get UnifiedPaymentToken : {}", token);
+        return unifiedPaymentTokenRepository.findByToken(token)
+                                            .map(unifiedPaymentTokenMapper::toDto);
     }
 
     @Override
