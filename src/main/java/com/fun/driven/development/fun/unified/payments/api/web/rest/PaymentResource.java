@@ -2,12 +2,19 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
 import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
+import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
 import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMethodCredentialDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleVM;
+import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
+import com.fun.driven.development.fun.unified.payments.gateway.core.PaymentGateway;
+import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
+import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
+import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,16 +51,25 @@ public class PaymentResource {
     private MerchantService merchantService;
 
     @Autowired
+    private PaymentMethodCredentialService credentialService;
+
+    @Autowired
     private UnifiedPaymentTokenService tokenService;
 
     @Autowired
     private CurrencyService currencyService;
 
+    @Autowired
+    private PaymentGateway paymentGateway;
+
+    @Autowired
+    private ReferenceGenerator referenceGenerator;
+
     /**
      * POST /v1/unified/payments/sale : Submits a sale payment request
      *
      * @param merchantReference  (required)
-     * @param sale Details of the sale payment (required)
+     * @param request Details of the sale payment (required)
      * @return Successfully created (status code 201)
      *         or Invalid input data supplied (status code 400)
      *         or Authentication information is missing or invalid (status code 401)
@@ -76,15 +92,24 @@ public class PaymentResource {
     public ResponseEntity<PaymentResultVM> submitSale(@ApiParam(required=true)
                                                         @RequestHeader(value="X-Unified-Payments-Merchant-Reference") String merchantReference,
                                                       @ApiParam(value = "Details of the sale payment", required=true )
-                                                        @Valid @RequestBody SaleVM sale)
+                                                        @Valid @RequestBody SaleVM request)
                                                 throws URISyntaxException {
-        Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, sale);
+        Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, request);
+        //TODO validate credentials and processor
         if (validationError.isPresent()) return validationError.get();
 
-        PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.SUCCESS)
-                                                      .resultDescription("Successfully created");
-        return ResponseEntity.created(new URI("/api/v1/unified/payments/sale/" + result.getResultCode()))
-                             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getResultCode().toString()))
+        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        AvailableProcessor processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
+        Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(merchantDTO.get().getId(),
+                                                                                                              processor.getPaymentMethodId());
+        String reference = referenceGenerator.generate();
+        SaleRequest saleRequest = request.toSaleRequest(reference)
+                                         .merchantCredentialsJson(credential.get().getCredentials());
+        SaleResult saleResult = paymentGateway.using(processor).sale(saleRequest);
+        PaymentResultVM result = PaymentResultVM.fromSaleResult(saleResult);
+
+        return ResponseEntity.created(new URI("/api/v1/unified/payments/sale/" + saleResult.getResultCode()))
+                             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, saleResult.getResultCode().toString()))
                              .body(result);
     }
 

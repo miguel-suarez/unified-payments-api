@@ -3,6 +3,7 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
@@ -10,12 +11,23 @@ import java.util.Objects;
 public class PaymentResultVM {
 
     @JsonProperty
-    @ApiModelProperty(example = "Success", value = "")
+    @ApiModelProperty(example = "Authorized")
     private ResultCodeEnum resultCode;
 
     @JsonProperty
-    @ApiModelProperty(example = "Payment successful", value = "")
+    @ApiModelProperty(example = "Sale authorized with code xyz123")
     private String resultDescription;
+
+    @JsonProperty
+    @ApiModelProperty(example = "")
+    private String reference;
+
+    public static PaymentResultVM fromSaleResult(SaleResult saleResult) {
+        ResultCodeEnum resultCodeEnum = ResultCodeEnum.valueOf(saleResult.getResultCode().name());
+        return new PaymentResultVM().resultCode(resultCodeEnum)
+                                    .resultDescription(saleResult.getResultDescription())
+                                    .reference(saleResult.getReference());
+    }
 
     public PaymentResultVM resultCode(ResultCodeEnum resultCode) {
         this.resultCode = resultCode;
@@ -24,10 +36,6 @@ public class PaymentResultVM {
 
     public ResultCodeEnum getResultCode() {
         return resultCode;
-    }
-
-    public void setResultCode(ResultCodeEnum resultCode) {
-        this.resultCode = resultCode;
     }
 
     public PaymentResultVM resultDescription(String resultDescription) {
@@ -39,8 +47,13 @@ public class PaymentResultVM {
         return resultDescription;
     }
 
-    public void setResultDescription(String resultDescription) {
-        this.resultDescription = resultDescription;
+    public String getReference() {
+        return reference;
+    }
+
+    public PaymentResultVM reference(String reference) {
+        this.reference = reference;
+        return this;
     }
 
     @Override
@@ -67,16 +80,12 @@ public class PaymentResultVM {
     }
 
     public enum ResultCodeEnum {
+        AUTHORIZED("Authorized"),
         CANCELLED("Cancelled"),
-
         ERROR("Error"),
-
         PENDING("Pending"),
-
         REFUSED("Refused"),
-
         SUCCESS("Success"),
-
         VALIDATION_ERROR("ValidationError");
 
         private String value;

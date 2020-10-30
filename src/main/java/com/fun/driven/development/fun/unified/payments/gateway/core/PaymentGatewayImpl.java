@@ -1,25 +1,24 @@
 package com.fun.driven.development.fun.unified.payments.gateway.core;
 
 import com.fun.driven.development.fun.unified.payments.gateway.processors.BraintreeSaleProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.EnumMap;
 import java.util.HashMap;
 
 @SuppressWarnings("rawtypes")
 @Service
-public class PaymentGatewayImpl {
-
-    private static final Logger log = LoggerFactory.getLogger(PaymentGatewayImpl.class);
+public class PaymentGatewayImpl implements PaymentGateway {
 
     @Autowired
     private BraintreeSaleProcessor braintreeSaleProcessor;
 
-    private final HashMap<AvailableProcessor, SaleProcessor> paymentProcessors = new HashMap<>();
+    private final HashMap<AvailableProcessor, SaleProcessor> paymentProcessors = new EnumMap<>();
 
-    public PaymentGatewayImpl() {
+    @PostConstruct
+    private void setUp() {
         paymentProcessors.put(AvailableProcessor.BRAINTREE, braintreeSaleProcessor);
     }
 
