@@ -8,12 +8,12 @@ public interface SaleProcessor<I, O, C> {
 
     O thirdPartySale(I request, C credentials);
 
-    SaleResult toUnifiedResult(O thirdPartyResult);
+    SaleResult toUnifiedResult(O thirdPartyResult, SaleRequest request);
 
     default SaleResult sale(SaleRequest request) {
         I input = toThirdPartyRequest(request);
         C credentials = loadMerchantCredentials(request);
         O output = thirdPartySale(input, credentials);
-        return toUnifiedResult(output);
+        return toUnifiedResult(output, request);
     }
 }

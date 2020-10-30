@@ -26,11 +26,11 @@ class BraintreeSaleProcessorTest {
     void attemptSaleWithWrongCredentials() {
         String merchantCredentials = "{\"merchantId\":\"invalid\",\"publicKey\":\"invalid\"," +
             "\"privateKey\":\"invalid\"}";
-        SaleRequest request = new SaleRequest().setAmountInCents(100L)
-                                               .setCurrencyIsoCode("EUR")
-                                               .setMerchantCredentialsJson(merchantCredentials)
-                                               .setToken(new UnifiedToken("abc"))
-                                               .setReference("12345");
+        SaleRequest request = new SaleRequest().amountInCents(100L)
+                                               .currencyIsoCode("EUR")
+                                               .merchantCredentialsJson(merchantCredentials)
+                                               .token(new UnifiedToken("abc"))
+                                               .reference("12345");
         SaleResult result = braintreeSaleProcessor.sale(request);
         assertNotNull(result);
         assertEquals(SaleResult.ResultCode.ERROR, result.getResultCode());

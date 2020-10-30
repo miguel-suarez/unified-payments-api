@@ -16,7 +16,6 @@ import com.fun.driven.development.fun.unified.payments.gateway.core.SaleProcesso
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.AmountConverter;
-import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
 import com.fun.driven.development.fun.unified.payments.vault.Card;
 import com.fun.driven.development.fun.unified.payments.vault.PaymentDetailsVault;
 import io.github.jhipster.config.JHipsterConstants;
@@ -46,9 +45,6 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
 
     @Autowired
     private MessageSource messageSource;
-
-    @Autowired
-    private ReferenceGenerator referenceGenerator;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -103,19 +99,19 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
     }
 
     @Override
-    public SaleResult toUnifiedResult(Pair<Result<Transaction>, String> resultOrError) {
+    public SaleResult toUnifiedResult(Pair<Result<Transaction>, String> resultOrError, SaleRequest request) {
         SaleResult result;
         Result<Transaction> thirdPartyResult = resultOrError.getFirst();
         String error = resultOrError.getSecond();
 
         if (StringUtils.hasText(error)) {
-            result = buildErrorResult(error);
+            result = buildErrorResult(error, request);
         } else if (thirdPartyResult.isSuccess()) {
-            result = buildAuthorizedResult(thirdPartyResult);
+            result = buildAuthorizedResult(thirdPartyResult, request);
         } else if (thirdPartyResult.getTransaction() != null) {
-            result = buildErrorResult(thirdPartyResult);
+            result = buildErrorResult(thirdPartyResult, request);
         } else {
-            result = buildValidationErrorResult(thirdPartyResult);
+            result = buildValidationErrorResult(thirdPartyResult, request);
         }
 
         if (log.isDebugEnabled()) log.debug("Sale result {}", result);
@@ -138,35 +134,35 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         }
     }
 
-    private SaleResult buildAuthorizedResult(Result<Transaction> thirdPartyResult) {
+    private SaleResult buildAuthorizedResult(Result<Transaction> thirdPartyResult, SaleRequest request) {
         Transaction transaction = thirdPartyResult.getTarget();
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.AUTHORIZED;
         String message = retrieveResultMessage(resultCode, transaction.getId());
-        return new SaleResult().setReference(referenceGenerator.generate())
-                               .setResultCode(resultCode)
-                               .setResultDescription(message);
+        return new SaleResult().reference(request.getReference())
+                               .resultCode(resultCode)
+                               .resultDescription(message);
     }
 
-    private SaleResult buildErrorResult(String thirdPartyError) {
+    private SaleResult buildErrorResult(String thirdPartyError, SaleRequest request) {
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.ERROR;
         String message = retrieveResultMessage(resultCode, thirdPartyError);
-        return new SaleResult().setReference(referenceGenerator.generate())
-                               .setResultCode(resultCode)
-                               .setResultDescription(message);
+        return new SaleResult().reference(request.getReference())
+                               .resultCode(resultCode)
+                               .resultDescription(message);
     }
 
-    private SaleResult buildErrorResult(Result<Transaction> thirdPartyResult) {
+    private SaleResult buildErrorResult(Result<Transaction> thirdPartyResult, SaleRequest request) {
         Transaction transaction = thirdPartyResult.getTransaction();
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.ERROR;
         //TODO instead of directly returning the third party error code, create a map to internal,
         // curated error codes
         String message = retrieveResultMessage(resultCode, transaction.getProcessorResponseCode());
-        return new SaleResult().setReference(referenceGenerator.generate())
-                               .setResultCode(resultCode)
-                               .setResultDescription(message);
+        return new SaleResult().reference(request.getReference())
+                               .resultCode(resultCode)
+                               .resultDescription(message);
     }
 
-    private SaleResult buildValidationErrorResult(Result<Transaction> thirdPartyResult) {
+    private SaleResult buildValidationErrorResult(Result<Transaction> thirdPartyResult, SaleRequest request) {
         String validationMessage = "";
         for (ValidationError error : thirdPartyResult.getErrors().getAllDeepValidationErrors()) {
             validationMessage = error.getAttribute() + " " + error.getMessage();
@@ -176,9 +172,9 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         // curated validation errors
         SaleResult.ResultCode resultCode = SaleResult.ResultCode.VALIDATION_ERROR;
         String message = retrieveResultMessage(resultCode, validationMessage);
-        return new SaleResult().setReference(referenceGenerator.generate())
-                               .setResultCode(resultCode)
-                               .setResultDescription(message);
+        return new SaleResult().reference(request.getReference())
+                               .resultCode(resultCode)
+                               .resultDescription(message);
     }
 
     private String retrieveResultMessage(SaleResult.ResultCode resultCode, String param) {
