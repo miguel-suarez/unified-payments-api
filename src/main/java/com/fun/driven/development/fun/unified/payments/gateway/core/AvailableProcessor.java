@@ -1,6 +1,7 @@
 package com.fun.driven.development.fun.unified.payments.gateway.core;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public enum AvailableProcessor {
     BRAINTREE("braintree", 1L);
@@ -21,13 +22,13 @@ public enum AvailableProcessor {
         return paymentMethodId;
     }
 
-    public static AvailableProcessor fromReference(@Nonnull String reference) {
+    public static Optional<AvailableProcessor> fromReference(@Nonnull String reference) {
         for (AvailableProcessor processor : AvailableProcessor.values()) {
             if (processor.reference.equals(reference)) {
-                return processor;
+                return Optional.of(processor);
             }
         }
-        throw new IllegalArgumentException("Unexpected reference '" + reference + "'");
+        return Optional.empty();
     }
 
 }
