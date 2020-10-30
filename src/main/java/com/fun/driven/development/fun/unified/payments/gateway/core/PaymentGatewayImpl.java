@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 @Service
@@ -15,7 +15,7 @@ public class PaymentGatewayImpl implements PaymentGateway {
     @Autowired
     private BraintreeSaleProcessor braintreeSaleProcessor;
 
-    private final HashMap<AvailableProcessor, SaleProcessor> paymentProcessors = new EnumMap<>();
+    private final Map<AvailableProcessor, SaleProcessor> paymentProcessors = new EnumMap<>(AvailableProcessor.class);
 
     @PostConstruct
     private void setUp() {
