@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = FunUnifiedPaymentsApiApp.class)
@@ -34,11 +33,8 @@ class BraintreeSaleProcessorTest {
         SaleResult result = braintreeSaleProcessor.sale(request);
         assertNotNull(result);
         assertEquals(SaleResult.ResultCode.ERROR, result.getResultCode());
-        assertTrue(result.getReference().startsWith("19999"));
-        assertEquals(20, result.getReference().length());
+        assertEquals("12345", result.getReference());
         assertNotNull(result.getResultDescription());
     }
-
-    //TODO implement other cases after the Vault is implemented
 
 }
