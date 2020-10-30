@@ -1,15 +1,23 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
 
 public class PaymentResultVM {
+
+    public enum ResultCodeEnum {
+        AUTHORIZED,
+        CANCELLED,
+        ERROR,
+        PENDING,
+        REFUSED,
+        SUCCESS,
+        VALIDATION_ERROR
+    }
 
     @JsonProperty
     @ApiModelProperty(example = "AUTHORIZED")
@@ -84,42 +92,6 @@ public class PaymentResultVM {
     public String toString() {
         return "PaymentResultVM{" + "resultCode=" + resultCode +
             ", resultDescription='" + resultDescription + '\'' + '}';
-    }
-
-    public enum ResultCodeEnum {
-        AUTHORIZED("Authorized"),
-        CANCELLED("Cancelled"),
-        ERROR("Error"),
-        PENDING("Pending"),
-        REFUSED("Refused"),
-        SUCCESS("Success"),
-        VALIDATION_ERROR("ValidationError");
-
-        private String value;
-
-        ResultCodeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonCreator
-        public static ResultCodeEnum fromValue(String value) {
-            for (ResultCodeEnum b : ResultCodeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
     }
 }
 
