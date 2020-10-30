@@ -1,6 +1,7 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
@@ -56,6 +57,7 @@ public class PaymentResultVM {
         return this;
     }
 
+    @JsonIgnore
     public boolean isOK() {
         return resultCode.equals(ResultCodeEnum.AUTHORIZED) ||
                resultCode.equals(ResultCodeEnum.SUCCESS);

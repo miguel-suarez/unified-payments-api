@@ -41,20 +41,20 @@ public class PaymentResourceIT {
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isCreated());
+                           .andExpect(status().isOk());
     }
 
     @Test
     @Transactional
     // If no currencyCode is given, EUR is used as a default value
     void saleWithoutCurrencyCode() throws Exception {
-        SaleVM saleVM = new SaleVM().amountInCents(100L)
+        SaleVM saleVM = new SaleVM().amountInCents(101L)
                                     .token("Meadow");
         restMerchantMockMvc.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isCreated());
+                           .andExpect(status().isOk());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PaymentResourceIT {
     void saleWithoutBasicAuthentication() throws Exception {
         SaleVM saleVM = new SaleVM().amountInCents(100L)
                                     .currencyIsoCode("EUR")
-                                    .token("Meadow");
+                                    .token("Racket");
         restMerchantMockMvc.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))
@@ -76,7 +76,7 @@ public class PaymentResourceIT {
     void saleWithWrongMerchantReference() throws Exception {
         SaleVM saleVM = new SaleVM().amountInCents(100L)
                                     .currencyIsoCode("EUR")
-                                    .token("Meadow");
+                                    .token("Racket");
         restMerchantMockMvc.perform(post((ENDPOINT_URL))
                                    .contentType(MediaType.APPLICATION_JSON)
                                    .content(TestUtil.convertObjectToJsonBytes(saleVM))
@@ -86,10 +86,50 @@ public class PaymentResourceIT {
 
     @Test
     @Transactional
+    void saleWithWrongPaymentProcessor() throws Exception {
+        SaleVM saleVM = new SaleVM().amountInCents(100L)
+                                    .currencyIsoCode("EUR")
+                                    .paymentProcessor("invalid")
+                                    .token("Racket");
+        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+                                   .contentType(MediaType.APPLICATION_JSON)
+                                   .content(TestUtil.convertObjectToJsonBytes(saleVM))
+                                   .header(Constants.MERCHANT_HEADER,"xyz"))
+                           .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Transactional
+    void saleWithWrongMerchantCredentials() throws Exception {
+        SaleVM saleVM = new SaleVM().amountInCents(100L)
+                                    .currencyIsoCode("EUR")
+                                    .token("Raspberry");
+        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(TestUtil.convertObjectToJsonBytes(saleVM))
+                                    .header(Constants.MERCHANT_HEADER,"atom"))
+                           .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    @Transactional
     void saleWithoutAmount() throws Exception {
         SaleVM saleVM = new SaleVM().amountInCents(null)
                                     .currencyIsoCode("EUR")
-                                    .token("Meadow");
+                                    .token("Racket");
+        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(TestUtil.convertObjectToJsonBytes(saleVM))
+                                    .header(Constants.MERCHANT_HEADER,"hardware"))
+                           .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void saleWithTokenOfDifferentMerchant() throws Exception {
+        SaleVM saleVM = new SaleVM().amountInCents(102L)
+                                    .currencyIsoCode("EUR")
+                                    .token("Raspberry");
         restMerchantMockMvc.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))
@@ -127,7 +167,7 @@ public class PaymentResourceIT {
     void saleWithInvalidCurrency() throws Exception {
         SaleVM saleVM = new SaleVM().amountInCents(100L)
                                     .currencyIsoCode("OOO")
-                                    .token("Meadow");
+                                    .token("Racket");
         restMerchantMockMvc.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(saleVM))

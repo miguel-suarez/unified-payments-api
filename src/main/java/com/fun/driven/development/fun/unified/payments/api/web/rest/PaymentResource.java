@@ -105,7 +105,7 @@ public class PaymentResource {
         Optional<ResponseEntity<PaymentResultVM>> unauthorized = validateMerchant(merchantReference, sale);
         if (unauthorized.isPresent()) return unauthorized;
 
-        Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(sale);
+        Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(merchantReference, sale);
         if (badRequest.isPresent()) return badRequest;
 
         return validateCurrency(sale);
@@ -119,7 +119,8 @@ public class PaymentResource {
                                                                                 merchantDTO.get().getId());
         String reference = referenceGenerator.generate();
         SaleRequest saleRequest = request.toSaleRequest(reference)
-                                         .merchantCredentialsJson(credential.get().getCredentials());
+                                         .merchantCredentialsJson(credential.get().getCredentials())
+                                         .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
     }
 
@@ -150,13 +151,17 @@ public class PaymentResource {
         return Optional.empty();
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateToken(SaleVM sale) {
-        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByToken(sale.getToken());
+    private Optional<ResponseEntity<PaymentResultVM>> validateToken(String merchantReference, SaleVM sale) {
+        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1L;
+
+        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(sale.getToken(), merchantId);
         if (tokenDTO.isEmpty()) {
             PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
                                                           .resultDescription("Invalid token supplied");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
+
         return Optional.empty();
     }
 

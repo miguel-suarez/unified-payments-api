@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface UnifiedPaymentTokenRepository extends JpaRepository<UnifiedPaymentToken, Long> {
 
-    Optional<UnifiedPaymentToken> findByToken(@Param("token") String token);
+    Optional<UnifiedPaymentToken> findByTokenAndMerchantId(@Param("token") String token, @Param("merchantId") Long merchantId);
 }

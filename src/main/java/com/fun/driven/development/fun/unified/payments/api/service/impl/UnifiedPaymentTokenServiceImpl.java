@@ -57,9 +57,9 @@ public class UnifiedPaymentTokenServiceImpl implements UnifiedPaymentTokenServic
     }
 
     @Override
-    public Optional<UnifiedPaymentTokenDTO> findOneByToken(String token) {
-        log.debug("Request to get UnifiedPaymentToken : {}", token);
-        return unifiedPaymentTokenRepository.findByToken(token)
+    public Optional<UnifiedPaymentTokenDTO> findOneByTokenAndMerchantId(String token, Long merchantId) {
+        log.debug("Request to get UnifiedPaymentToken : {} {}", token, merchantId);
+        return unifiedPaymentTokenRepository.findByTokenAndMerchantId(token, merchantId)
                                             .map(unifiedPaymentTokenMapper::toDto);
     }
 
