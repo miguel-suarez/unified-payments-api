@@ -16,5 +16,7 @@ public interface TransactionService {
 
     Optional<TransactionDTO> findOne(Long id);
 
+    Optional<TransactionDTO> findOneByReference(String reference);
+
     void delete(Long id);
 }

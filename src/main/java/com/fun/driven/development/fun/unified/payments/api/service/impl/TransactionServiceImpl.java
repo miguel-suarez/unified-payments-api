@@ -56,6 +56,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Optional<TransactionDTO> findOneByReference(String reference) {
+        log.debug("Request to get Transaction : {}", reference);
+        return transactionRepository.findByFunReference(reference)
+                                    .map(transactionMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
