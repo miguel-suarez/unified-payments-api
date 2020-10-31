@@ -4,11 +4,13 @@ import com.fun.driven.development.fun.unified.payments.api.domain.User;
 import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
 import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
+import com.fun.driven.development.fun.unified.payments.api.service.TransactionService;
 import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
 import com.fun.driven.development.fun.unified.payments.api.service.UserService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMethodCredentialDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.TransactionDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UserDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
@@ -67,6 +69,9 @@ public class PaymentResource {
     @Autowired
     private ReferenceGenerator referenceGenerator;
 
+    @Autowired
+    private TransactionService transactionService;
+
     /**
      * POST /v1/unified/payments/sale : Submits a sale payment request
      *
@@ -93,7 +98,8 @@ public class PaymentResource {
         produces = { "application/json" },
         consumes = { "application/json" })
     public ResponseEntity<PaymentResultVM> submitSale(@ApiParam(required=true)
-                                                        @RequestHeader(value="X-Unified-Payments-Merchant-Reference") String merchantReference,
+                                                        @RequestHeader(value="X-Unified-Payments-Merchant-Reference")
+                                                        String merchantReference,
                                                       @ApiParam(value = "Details of the sale payment", required=true )
                                                         @Valid @RequestBody SaleVM request) {
         Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, request);
@@ -103,6 +109,8 @@ public class PaymentResource {
         SaleResult saleResult = paymentGateway.using(requestPair.getFirst()).sale(requestPair.getSecond());
         PaymentResultVM result = PaymentResultVM.fromSaleResult(saleResult);
 
+        TransactionDTO transaction = TransactionDTO.fromSale(request, result);
+        transactionService.save(fillIds(merchantReference, request, transaction));
         if (result.isOK()) return ResponseEntity.ok().body(result);
         return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
     }
@@ -133,6 +141,23 @@ public class PaymentResource {
                                          .merchantCredentialsJson(credentialJson)
                                          .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
+    }
+
+    private TransactionDTO fillIds(String merchantReference, SaleVM sale, TransactionDTO transaction) {
+        Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
+        Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1L;
+        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(sale.getPaymentProcessor());
+        Long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
+        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(sale.getToken(), merchantId);
+        Long tokenId = tokenDTO.isPresent() ? tokenDTO.get().getId() : -1L;
+        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(sale.getCurrencyIsoCode());
+        Long currencyId = currencyDTO.isPresent() ? currencyDTO.get().getId() : -1L;
+
+        transaction.setMerchantId(merchantId);
+        transaction.setCurrencyId(currencyId);
+        transaction.setUnifiedPaymentTokenId(tokenId);
+        transaction.setPaymentMethodId(paymentMethodId);
+        return transaction;
     }
 
     private Optional<ResponseEntity<PaymentResultVM>> validateMerchant(String merchantReference, SaleVM sale) {
