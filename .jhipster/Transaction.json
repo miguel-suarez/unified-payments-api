@@ -26,7 +26,7 @@
     {
       "fieldName": "result",
       "fieldType": "UnifiedTransactionResult",
-      "fieldValues": "Cancelled,Error,Pending,Refused,Success"
+      "fieldValues": "CANCELLED,ERROR,PENDING,REFUSED,SUCCESS"
     },
     {
       "fieldName": "processorResult",
@@ -41,31 +41,20 @@
   ],
   "relationships": [
     {
-      "relationshipType": "one-to-one",
+      "relationshipType": "many-to-one",
       "otherEntityName": "merchant",
       "otherEntityRelationshipName": "transaction",
       "relationshipValidateRules": "required",
       "relationshipName": "merchant",
-      "otherEntityField": "id",
-      "ownerSide": true
+      "otherEntityField": "id"
     },
     {
-      "relationshipType": "one-to-one",
+      "relationshipType": "many-to-one",
       "otherEntityName": "currency",
       "otherEntityRelationshipName": "transaction",
       "relationshipValidateRules": "required",
       "relationshipName": "currency",
-      "otherEntityField": "id",
-      "ownerSide": true
-    },
-    {
-      "relationshipType": "one-to-one",
-      "otherEntityName": "unifiedPaymentToken",
-      "otherEntityRelationshipName": "transaction",
-      "relationshipValidateRules": "required",
-      "relationshipName": "unifiedPaymentToken",
-      "otherEntityField": "id",
-      "ownerSide": true
+      "otherEntityField": "id"
     },
     {
       "relationshipType": "many-to-one",
@@ -73,6 +62,14 @@
       "otherEntityRelationshipName": "transaction",
       "relationshipValidateRules": "required",
       "relationshipName": "paymentMethod",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "unifiedPaymentToken",
+      "otherEntityRelationshipName": "transaction",
+      "relationshipValidateRules": "required",
+      "relationshipName": "unifiedPaymentToken",
       "otherEntityField": "id"
     }
   ],

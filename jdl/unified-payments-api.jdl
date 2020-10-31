@@ -57,11 +57,11 @@ enum TransactionType {
 }
 
 enum UnifiedTransactionResult {
-	Cancelled,
-    Error,
-    Pending,
-    Refused,
-    Success
+	CANCELLED,
+    ERROR,
+    PENDING,
+    REFUSED,
+    SUCCESS
 }
 
 entity Transaction {
@@ -93,11 +93,11 @@ relationship OneToMany {
     Merchant{unifiedPaymentToken} to UnifiedPaymentToken{merchant required}
 }
 
-relationship OneToOne {
+relationship ManyToOne {
     Transaction{merchant required} to Merchant
 }
 
-relationship OneToOne {
+relationship ManyToOne {
     Transaction{currency required} to Currency
 }
 
@@ -105,7 +105,7 @@ relationship ManyToOne {
     Transaction{paymentMethod required} to PaymentMethod
 }
 
-relationship OneToOne {
+relationship ManyToOne {
     Transaction{unifiedPaymentToken required} to UnifiedPaymentToken
 }
 

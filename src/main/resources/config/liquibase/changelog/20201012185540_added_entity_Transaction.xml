@@ -3,8 +3,6 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
-
-
     <!--
         Added the entity Transaction.
     -->
@@ -35,15 +33,15 @@
                 <constraints nullable="true" />
             </column>
             <column name="merchant_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_transaction_merchant_id" />
+                <constraints nullable="false" />
             </column>
             <column name="currency_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_transaction_currency_id" />
-            </column>
-            <column name="unified_payment_token_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_transaction_unified_payment_token_id" />
+                <constraints nullable="false" />
             </column>
             <column name="payment_method_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="unified_payment_token_id" type="bigint">
                 <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
@@ -79,8 +77,8 @@
             <column name="external_reference" type="string"/>
             <column name="merchant_id" type="numeric"/>
             <column name="currency_id" type="numeric"/>
-            <column name="unified_payment_token_id" type="numeric"/>
             <column name="payment_method_id" type="numeric"/>
+            <column name="unified_payment_token_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

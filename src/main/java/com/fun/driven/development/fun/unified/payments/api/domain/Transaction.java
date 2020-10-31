@@ -13,9 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -64,25 +62,25 @@ public class Transaction implements Serializable {
     @Column(name = "external_reference", length = 25)
     private String externalReference;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @NotNull
-    @JoinColumn(unique = true)
+    @JsonIgnoreProperties(value = "transactions", allowSetters = true)
     private Merchant merchant;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @NotNull
-    @JoinColumn(unique = true)
+    @JsonIgnoreProperties(value = "transactions", allowSetters = true)
     private Currency currency;
-
-    @OneToOne(optional = false)
-    @NotNull
-    @JoinColumn(unique = true)
-    private UnifiedPaymentToken unifiedPaymentToken;
 
     @ManyToOne(optional = false)
     @NotNull
     @JsonIgnoreProperties(value = "transactions", allowSetters = true)
     private PaymentMethod paymentMethod;
+
+    @ManyToOne(optional = false)
+    @NotNull
+    @JsonIgnoreProperties(value = "transactions", allowSetters = true)
+    private UnifiedPaymentToken unifiedPaymentToken;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -210,19 +208,6 @@ public class Transaction implements Serializable {
         this.currency = currency;
     }
 
-    public UnifiedPaymentToken getUnifiedPaymentToken() {
-        return unifiedPaymentToken;
-    }
-
-    public Transaction unifiedPaymentToken(UnifiedPaymentToken unifiedPaymentToken) {
-        this.unifiedPaymentToken = unifiedPaymentToken;
-        return this;
-    }
-
-    public void setUnifiedPaymentToken(UnifiedPaymentToken unifiedPaymentToken) {
-        this.unifiedPaymentToken = unifiedPaymentToken;
-    }
-
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
@@ -234,6 +219,19 @@ public class Transaction implements Serializable {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public UnifiedPaymentToken getUnifiedPaymentToken() {
+        return unifiedPaymentToken;
+    }
+
+    public Transaction unifiedPaymentToken(UnifiedPaymentToken unifiedPaymentToken) {
+        this.unifiedPaymentToken = unifiedPaymentToken;
+        return this;
+    }
+
+    public void setUnifiedPaymentToken(UnifiedPaymentToken unifiedPaymentToken) {
+        this.unifiedPaymentToken = unifiedPaymentToken;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
