@@ -75,4 +75,15 @@
         </loadData>
     </changeSet>
 
+    <changeSet id="20201012184940-2-data" author="jhipster" context="faker">
+        <loadData
+            file="config/liquibase/fake-data/merchant_user.csv"
+            separator=";"
+            tableName="merchant_user">
+            <column name="user_id" type="numeric"/>
+            <column name="merchant_id" type="numeric"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
+    </changeSet>
+
 </databaseChangeLog>
