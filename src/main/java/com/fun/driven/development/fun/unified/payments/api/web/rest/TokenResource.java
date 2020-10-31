@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,8 @@ public class TokenResource {
 
     @Autowired
     private TokenGenerator tokenGenerator;
+
+    private static LuhnCheckDigit luhnCheck = new LuhnCheckDigit();
 
     /**
      * POST /v1/unified/tokens : Generate a unified payment token for a card
@@ -111,15 +114,14 @@ public class TokenResource {
 
     private Optional<ResponseEntity<TokenVM>> validateCard(CardVM card) {
         if (isInvalidCardNumber(card)) {
-            TokenVM result = new TokenVM().errorMessage("User doesn't have enough credentials to access resource");
+            TokenVM result = new TokenVM().errorMessage("Invalid card number supplied");
             return Optional.of(ResponseEntity.badRequest().body(result));
         }
         return Optional.empty();
     }
 
     private boolean isInvalidCardNumber(CardVM card) {
-        //TODO implement
-        return false;
+        return ! luhnCheck.isValid(card.getCardNumber());
     }
 
 }

@@ -44,7 +44,7 @@ class TokenResourceIT {
     void tokenize() throws Exception {
         int tableSizeBefore = unifiedPaymentTokenService.findAll().size();
 
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryMonth(1)
                                      .expiryYear(2025);
 
@@ -62,21 +62,20 @@ class TokenResourceIT {
         assertThat(token.getToken()).startsWith("abc");
     }
 
-//TODO uncomment after implementing function that validates Card
-//    @Test
-//    @Transactional
-//    @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
-//    void tokenizeWithInvalidCardNumber() throws Exception {
-//        CardVM request = new CardVM().cardNumber("54654654665")
-//                                     .expiryMonth(1)
-//                                     .expiryYear(2025);
-//
-//        restTokenMock.perform(post((ENDPOINT_URL))
-//                                .contentType(MediaType.APPLICATION_JSON)
-//                                .content(TestUtil.convertObjectToJsonBytes(request))
-//                                .header(Constants.MERCHANT_HEADER,"hardware"))
-//                     .andExpect(status().isBadRequest());
-//    }
+    @Test
+    @Transactional
+    @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
+    void tokenizeWithInvalidCardNumber() throws Exception {
+        CardVM request = new CardVM().cardNumber("54654654665")
+                                     .expiryMonth(1)
+                                     .expiryYear(2025);
+
+        restTokenMock.perform(post((ENDPOINT_URL))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtil.convertObjectToJsonBytes(request))
+                                .header(Constants.MERCHANT_HEADER,"hardware"))
+                     .andExpect(status().isBadRequest());
+    }
 
     @Test
     @Transactional
@@ -96,7 +95,7 @@ class TokenResourceIT {
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithoutExpiryMonth() throws Exception {
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryYear(2025);
 
         restTokenMock.perform(post((ENDPOINT_URL))
@@ -110,7 +109,7 @@ class TokenResourceIT {
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithoutExpiryYear() throws Exception {
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryMonth(1);
 
         restTokenMock.perform(post((ENDPOINT_URL))
@@ -124,7 +123,7 @@ class TokenResourceIT {
     @Transactional
     @WithAnonymousUser
     void tokenizeWithoutBasicAuthentication() throws Exception {
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryMonth(1)
                                      .expiryYear(2025);
 
@@ -139,7 +138,7 @@ class TokenResourceIT {
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithWrongMerchantReference() throws Exception {
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryMonth(1)
                                      .expiryYear(2025);
 
@@ -154,7 +153,7 @@ class TokenResourceIT {
     @Transactional
     @WithUserDetails(value = "admin", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithWrongMerchantUserCombination() throws Exception {
-        CardVM request = new CardVM().cardNumber("54654654665")
+        CardVM request = new CardVM().cardNumber("370000000000002")
                                      .expiryMonth(1)
                                      .expiryYear(2025);
 
