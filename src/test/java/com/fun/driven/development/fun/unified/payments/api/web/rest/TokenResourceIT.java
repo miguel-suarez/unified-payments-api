@@ -80,6 +80,21 @@ class TokenResourceIT {
     @Test
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
+    void tokenizeWithExpired() throws Exception {
+        CardVM request = new CardVM().cardNumber("6703444444444449")
+                                     .expiryMonth(9)
+                                     .expiryYear(2020);
+
+        restTokenMock.perform(post((ENDPOINT_URL))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(TestUtil.convertObjectToJsonBytes(request))
+                                .header(Constants.MERCHANT_HEADER,"hardware"))
+                     .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithoutCardNumber() throws Exception {
         CardVM request = new CardVM().expiryMonth(1)
                                      .expiryYear(2025);
