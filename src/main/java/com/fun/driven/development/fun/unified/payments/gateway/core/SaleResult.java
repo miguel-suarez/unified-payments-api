@@ -16,6 +16,8 @@ public class SaleResult {
 
     private ResultCode resultCode;
 
+    private String processorResult;
+
     private String resultDescription;
 
     public String getReference() {
@@ -48,8 +50,13 @@ public class SaleResult {
         return resultDescription;
     }
 
-    public void setResultDescription(String resultDescription) {
-        this.resultDescription = resultDescription;
+    public String getProcessorResult() {
+        return processorResult;
+    }
+
+    public SaleResult processorResult(String processorResult) {
+        this.processorResult = processorResult;
+        return this;
     }
 
     public SaleResult resultDescription(String resultDescription) {

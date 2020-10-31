@@ -146,7 +146,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         String message = retrieveResultMessage(resultCode, transaction.getId());
         return new SaleResult().reference(request.getReference())
                                .resultCode(resultCode)
-                               .resultDescription(message);
+                               .resultDescription(message)
+                               .processorResult(transaction.getId());
     }
 
     private SaleResult buildErrorResult(String thirdPartyError, SaleRequest request) {
@@ -154,7 +155,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         String message = retrieveResultMessage(resultCode, thirdPartyError);
         return new SaleResult().reference(request.getReference())
                                .resultCode(resultCode)
-                               .resultDescription(message);
+                               .resultDescription(message)
+                               .processorResult(thirdPartyError);
     }
 
     private SaleResult buildErrorResult(Result<Transaction> thirdPartyResult, SaleRequest request) {
@@ -165,7 +167,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         String message = retrieveResultMessage(resultCode, transaction.getProcessorResponseCode());
         return new SaleResult().reference(request.getReference())
                                .resultCode(resultCode)
-                               .resultDescription(message);
+                               .resultDescription(message)
+                               .processorResult(transaction.getProcessorResponseCode());
     }
 
     private SaleResult buildValidationErrorResult(Result<Transaction> thirdPartyResult, SaleRequest request) {
@@ -180,7 +183,8 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
         String message = retrieveResultMessage(resultCode, validationMessage);
         return new SaleResult().reference(request.getReference())
                                .resultCode(resultCode)
-                               .resultDescription(message);
+                               .resultDescription(message)
+                               .processorResult(validationMessage);
     }
 
     private String retrieveResultMessage(SaleResult.ResultCode resultCode, String param) {
