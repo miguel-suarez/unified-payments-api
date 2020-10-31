@@ -37,6 +37,11 @@ public class SaleVM {
     @Size(max = 50)
     private String paymentProcessor;
 
+    @JsonProperty
+    @ApiModelProperty(example = "merchant12345")
+    @Size(max = 25)
+    private String externalReference;
+
     public SaleVM() {
         // Default values for optional parameters
         currencyIsoCode = "EUR";
@@ -65,10 +70,6 @@ public class SaleVM {
         return amountInCents;
     }
 
-    public void setAmountInCents(Long amountInCents) {
-        this.amountInCents = amountInCents;
-    }
-
     public SaleVM currencyIsoCode(String currencyIsoCode) {
         this.currencyIsoCode = currencyIsoCode;
         return this;
@@ -78,21 +79,17 @@ public class SaleVM {
         return currencyIsoCode;
     }
 
-    public void setCurrencyIsoCode(String currencyIsoCode) {
-        this.currencyIsoCode = currencyIsoCode;
-    }
-
     public String getPaymentProcessor() {
         return paymentProcessor;
-    }
-
-    public void setPaymentProcessor(String paymentProcessor) {
-        this.paymentProcessor = paymentProcessor;
     }
 
     public SaleVM paymentProcessor(String paymentProcessor) {
         this.paymentProcessor = paymentProcessor;
         return this;
+    }
+
+    public String getExternalReference() {
+        return externalReference;
     }
 
     // Mapstruct is not used this mapping doesn't fit the entity / DTO interface defined
@@ -115,12 +112,14 @@ public class SaleVM {
         return Objects.equals(this.token, sale.token) &&
             Objects.equals(this.amountInCents, sale.amountInCents) &&
             Objects.equals(this.currencyIsoCode, sale.currencyIsoCode) &&
-            Objects.equals(this.paymentProcessor, sale.paymentProcessor);
+            Objects.equals(this.paymentProcessor, sale.paymentProcessor) &&
+            Objects.equals(this.externalReference, sale.externalReference);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token, amountInCents, currencyIsoCode, paymentProcessor);
+        return Objects.hash(token, amountInCents, currencyIsoCode,
+                            paymentProcessor, externalReference);
     }
 
     @Override
@@ -130,6 +129,7 @@ public class SaleVM {
             ", amountInCents=" + amountInCents +
             ", currencyIsoCode='" + currencyIsoCode + '\'' +
             ", paymentProcessor='" + paymentProcessor + '\'' +
+            ", externalReference='" + externalReference + '\'' +
             '}';
     }
 }
