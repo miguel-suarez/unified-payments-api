@@ -13,8 +13,8 @@ import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMe
 import com.fun.driven.development.fun.unified.payments.api.service.dto.TransactionDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UserDTO;
-import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
-import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleVM;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleRequestVM;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleResultVM;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
 import com.fun.driven.development.fun.unified.payments.gateway.core.PaymentGateway;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
@@ -84,11 +84,11 @@ public class PaymentResource {
      *         or Sorry we can&#39;t process this request at the moment (status code 500)
      */
     @ApiOperation(value = "Submits a sale payment request", nickname = "submitSale",
-                  response = PaymentResultVM.class,
+                  response = SaleResultVM.class,
                   authorizations = {@Authorization(value = "basic_auth")},
                   tags={ "payment" })
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully processed", response = PaymentResultVM.class),
+        @ApiResponse(code = 200, message = "Successfully processed", response = SaleResultVM.class),
         @ApiResponse(code = 400, message = "Invalid input data supplied"),
         @ApiResponse(code = 401, message = "Authentication information is missing or invalid"),
         @ApiResponse(code = 403, message = "User isn't allow to perform the requested action"),
@@ -97,17 +97,17 @@ public class PaymentResource {
     @PostMapping(value = "/v1/unified/payments/sale",
         produces = { "application/json" },
         consumes = { "application/json" })
-    public ResponseEntity<PaymentResultVM> submitSale(@ApiParam(required=true)
+    public ResponseEntity<SaleResultVM> submitSale(@ApiParam(required=true)
                                                         @RequestHeader(value="X-Unified-Payments-Merchant-Reference")
                                                         String merchantReference,
-                                                      @ApiParam(value = "Details of the sale payment", required=true )
-                                                        @Valid @RequestBody SaleVM request) {
-        Optional<ResponseEntity<PaymentResultVM>> validationError = validateInput(merchantReference, request);
+                                                   @ApiParam(value = "Details of the Sale payment", required=true )
+                                                        @Valid @RequestBody SaleRequestVM request) {
+        Optional<ResponseEntity<SaleResultVM>> validationError = validateInput(merchantReference, request);
         if (validationError.isPresent()) return validationError.get();
 
         Pair<AvailableProcessor, SaleRequest> requestPair = buildSaleRequest(merchantReference, request);
         SaleResult saleResult = paymentGateway.using(requestPair.getFirst()).sale(requestPair.getSecond());
-        PaymentResultVM result = PaymentResultVM.fromSaleResult(saleResult);
+        SaleResultVM result = SaleResultVM.fromGatewayResult(saleResult);
 
         TransactionDTO transaction = TransactionDTO.fromSale(request, result);
         transactionService.save(fillIds(merchantReference, request, transaction));
@@ -115,20 +115,21 @@ public class PaymentResource {
         return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateInput(String merchantReference, SaleVM sale) {
-        Optional<ResponseEntity<PaymentResultVM>> unauthorized = validateMerchant(merchantReference, sale);
+    private Optional<ResponseEntity<SaleResultVM>> validateInput(String merchantReference, SaleRequestVM request) {
+        Optional<ResponseEntity<SaleResultVM>> unauthorized = validateMerchant(merchantReference, request);
         if (unauthorized.isPresent()) return unauthorized;
 
-        Optional<ResponseEntity<PaymentResultVM>> badRequest = validateToken(merchantReference, sale);
+        Optional<ResponseEntity<SaleResultVM>> badRequest = validateToken(merchantReference, request);
         if (badRequest.isPresent()) return badRequest;
 
         badRequest = validateUserMerchant(merchantReference);
         if (badRequest.isPresent()) return badRequest;
 
-        return validateCurrency(sale);
+        return validateCurrency(request);
     }
 
-    private Pair<AvailableProcessor, SaleRequest> buildSaleRequest(String merchantReference, SaleVM request) {
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    private Pair<AvailableProcessor, SaleRequest> buildSaleRequest(String merchantReference, SaleRequestVM request) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
         Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
         Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
@@ -143,14 +144,14 @@ public class PaymentResource {
         return Pair.of(processor.get(), saleRequest);
     }
 
-    private TransactionDTO fillIds(String merchantReference, SaleVM sale, TransactionDTO transaction) {
+    private TransactionDTO fillIds(String merchantReference, SaleRequestVM request, TransactionDTO transaction) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
         Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1L;
-        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(sale.getPaymentProcessor());
+        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
         Long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
-        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(sale.getToken(), merchantId);
+        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(request.getToken(), merchantId);
         Long tokenId = tokenDTO.isPresent() ? tokenDTO.get().getId() : -1L;
-        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(sale.getCurrencyIsoCode());
+        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(request.getCurrencyIsoCode());
         Long currencyId = currencyDTO.isPresent() ? currencyDTO.get().getId() : -1L;
 
         transaction.setMerchantId(merchantId);
@@ -160,18 +161,18 @@ public class PaymentResource {
         return transaction;
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateMerchant(String merchantReference, SaleVM sale) {
+    private Optional<ResponseEntity<SaleResultVM>> validateMerchant(String merchantReference, SaleRequestVM request) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
         if (merchantDTO.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("Authentication information is missing or invalid");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("Authentication information is missing or invalid");
             return Optional.of(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result));
         }
 
-        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(sale.getPaymentProcessor());
+        Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
         if (processor.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("Invalid payment processor supplied");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("Invalid payment processor supplied");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
 
@@ -180,14 +181,14 @@ public class PaymentResource {
         Optional<PaymentMethodCredentialDTO> credentialDTO = credentialService.findOneByPaymentMethodAndMerchant(paymentMethodId, merchantId);
 
         if (credentialDTO.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("Third party credentials are incorrect for required payment method");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("Third party credentials are incorrect for required payment method");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
         return Optional.empty();
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateUserMerchant(String merchantReference) {
+    private Optional<ResponseEntity<SaleResultVM>> validateUserMerchant(String merchantReference) {
         Optional<User> authorizedUser = userService.getUserWithAuthorities();
         Long authorizedUserId = authorizedUser.isPresent() ? authorizedUser.get().getId() : -1;
         Optional<MerchantDTO> merchantOptional = merchantService.findOneByReference(merchantReference);
@@ -197,32 +198,32 @@ public class PaymentResource {
                                                .filter(u -> u.getId().equals(authorizedUserId))
                                                .findFirst();
         if (userDto.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("User doesn't have enough credentials to access resource");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("User doesn't have enough credentials to access resource");
             return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body(result));
         }
         return Optional.empty();
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateToken(String merchantReference, SaleVM sale) {
+    private Optional<ResponseEntity<SaleResultVM>> validateToken(String merchantReference, SaleRequestVM request) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
         Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1L;
 
-        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(sale.getToken(), merchantId);
+        Optional<UnifiedPaymentTokenDTO> tokenDTO = tokenService.findOneByTokenAndMerchantId(request.getToken(), merchantId);
         if (tokenDTO.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("Invalid token supplied");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("Invalid token supplied");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
 
         return Optional.empty();
     }
 
-    private Optional<ResponseEntity<PaymentResultVM>> validateCurrency(SaleVM sale) {
-        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(sale.getCurrencyIsoCode());
+    private Optional<ResponseEntity<SaleResultVM>> validateCurrency(SaleRequestVM request) {
+        Optional<CurrencyDTO> currencyDTO = currencyService.findOneByIsoCode(request.getCurrencyIsoCode());
         if (currencyDTO.isEmpty()) {
-            PaymentResultVM result = new PaymentResultVM().resultCode(PaymentResultVM.ResultCodeEnum.VALIDATION_ERROR)
-                                                          .resultDescription("Invalid currency code supplied");
+            SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
+                                                    .resultDescription("Invalid currency code supplied");
             return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result));
         }
         return Optional.empty();

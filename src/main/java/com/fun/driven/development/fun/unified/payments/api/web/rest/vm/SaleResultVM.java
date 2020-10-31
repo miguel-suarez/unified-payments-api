@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PaymentResultVM {
+public class SaleResultVM {
 
     public enum ResultCodeEnum {
         AUTHORIZED,
@@ -36,15 +36,15 @@ public class PaymentResultVM {
     @JsonIgnore
     private String processorResult;
 
-    public static PaymentResultVM fromSaleResult(SaleResult saleResult) {
+    public static SaleResultVM fromGatewayResult(SaleResult saleResult) {
         ResultCodeEnum resultCodeEnum = ResultCodeEnum.valueOf(saleResult.getResultCode().name());
-        return new PaymentResultVM().resultCode(resultCodeEnum)
-                                    .resultDescription(saleResult.getResultDescription())
-                                    .reference(saleResult.getReference())
-                                    .processorResult(saleResult.getProcessorResult());
+        return new SaleResultVM().resultCode(resultCodeEnum)
+                                 .resultDescription(saleResult.getResultDescription())
+                                 .reference(saleResult.getReference())
+                                 .processorResult(saleResult.getProcessorResult());
     }
 
-    public PaymentResultVM resultCode(ResultCodeEnum resultCode) {
+    public SaleResultVM resultCode(ResultCodeEnum resultCode) {
         this.resultCode = resultCode;
         return this;
     }
@@ -53,7 +53,7 @@ public class PaymentResultVM {
         return resultCode;
     }
 
-    public PaymentResultVM resultDescription(String resultDescription) {
+    public SaleResultVM resultDescription(String resultDescription) {
         this.resultDescription = resultDescription;
         return this;
     }
@@ -66,7 +66,7 @@ public class PaymentResultVM {
         return reference;
     }
 
-    public PaymentResultVM reference(String reference) {
+    public SaleResultVM reference(String reference) {
         this.reference = reference;
         return this;
     }
@@ -75,7 +75,7 @@ public class PaymentResultVM {
         return processorResult;
     }
 
-    public PaymentResultVM processorResult(String processorResult) {
+    public SaleResultVM processorResult(String processorResult) {
         this.processorResult = processorResult;
         return this;
     }
@@ -94,7 +94,7 @@ public class PaymentResultVM {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PaymentResultVM paymentResult = (PaymentResultVM) o;
+        SaleResultVM paymentResult = (SaleResultVM) o;
         return Objects.equals(this.resultCode, paymentResult.resultCode) && Objects.equals(this.resultDescription, paymentResult.resultDescription);
     }
 

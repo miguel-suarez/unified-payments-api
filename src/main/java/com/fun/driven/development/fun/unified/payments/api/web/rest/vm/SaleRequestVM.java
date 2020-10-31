@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-public class SaleVM {
+public class SaleRequestVM {
 
     @JsonProperty
     @ApiModelProperty(required = true)
@@ -42,13 +42,13 @@ public class SaleVM {
     @Size(max = 25)
     private String externalReference;
 
-    public SaleVM() {
+    public SaleRequestVM() {
         // Default values for optional parameters
         currencyIsoCode = "EUR";
         paymentProcessor = AvailableProcessor.BRAINTREE.getReference();
     }
 
-    public SaleVM token(String token) {
+    public SaleRequestVM token(String token) {
         this.token = token;
         return this;
     }
@@ -61,7 +61,7 @@ public class SaleVM {
         this.token = token;
     }
 
-    public SaleVM amountInCents(Long amountInCents) {
+    public SaleRequestVM amountInCents(Long amountInCents) {
         this.amountInCents = amountInCents;
         return this;
     }
@@ -70,7 +70,7 @@ public class SaleVM {
         return amountInCents;
     }
 
-    public SaleVM currencyIsoCode(String currencyIsoCode) {
+    public SaleRequestVM currencyIsoCode(String currencyIsoCode) {
         this.currencyIsoCode = currencyIsoCode;
         return this;
     }
@@ -83,7 +83,7 @@ public class SaleVM {
         return paymentProcessor;
     }
 
-    public SaleVM paymentProcessor(String paymentProcessor) {
+    public SaleRequestVM paymentProcessor(String paymentProcessor) {
         this.paymentProcessor = paymentProcessor;
         return this;
     }
@@ -108,7 +108,7 @@ public class SaleVM {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SaleVM sale = (SaleVM) o;
+        SaleRequestVM sale = (SaleRequestVM) o;
         return Objects.equals(this.token, sale.token) &&
             Objects.equals(this.amountInCents, sale.amountInCents) &&
             Objects.equals(this.currencyIsoCode, sale.currencyIsoCode) &&

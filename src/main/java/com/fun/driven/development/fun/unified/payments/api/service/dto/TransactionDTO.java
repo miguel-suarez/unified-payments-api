@@ -2,8 +2,8 @@ package com.fun.driven.development.fun.unified.payments.api.service.dto;
 
 import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.TransactionType;
 import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.UnifiedTransactionResult;
-import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.PaymentResultVM;
-import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleVM;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleRequestVM;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleResultVM;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -45,7 +45,7 @@ public class TransactionDTO implements Serializable {
 
     private Long paymentMethodId;
 
-    public static TransactionDTO fromSale(SaleVM request, PaymentResultVM result) {
+    public static TransactionDTO fromSale(SaleRequestVM request, SaleResultVM result) {
         TransactionDTO tx = new TransactionDTO();
         tx.amount = request.getAmountInCents();
         tx.funReference = result.getReference();
