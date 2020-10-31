@@ -41,4 +41,11 @@ public class Card {
         this.expirationYear = expirationYear;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Card{" + "number='xxxxxxxxxxxxx\'" +
+            ", expirationMonth=" + expirationMonth +
+            ", expirationYear=" + expirationYear + '}';
+    }
 }

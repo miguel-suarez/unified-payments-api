@@ -78,4 +78,11 @@ public class CardVM {
         LocalDate expiryDate = firstDayMonthExpiry.with(TemporalAdjusters.lastDayOfMonth());
         return expiryDate.isBefore(LocalDate.now());
     }
+
+    @Override
+    public String toString() {
+        return "CardVM{" + "cardNumber='xxxxxxxxxxxxx\'" +
+            ", expiryMonth=" + expiryMonth +
+            ", expiryYear=" + expiryYear + '}';
+    }
 }
