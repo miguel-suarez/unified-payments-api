@@ -123,7 +123,7 @@ public class PaymentResourceIT {
 
     @Test
     @Transactional
-    @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
+    @WithUserDetails(value = "admin", userDetailsServiceBeanName = "userDetailsService")
     void saleWithWrongMerchantCredentials() throws Exception {
         SaleVM saleVM = new SaleVM().amountInCents(100L)
                                     .currencyIsoCode("EUR")
