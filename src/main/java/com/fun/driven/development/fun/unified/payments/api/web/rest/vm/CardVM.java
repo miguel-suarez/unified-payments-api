@@ -36,23 +36,26 @@ public class CardVM {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) {
+    public CardVM cardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+        return this;
     }
 
     public Integer getExpiryMonth() {
         return expiryMonth;
     }
 
-    public void setExpiryMonth(Integer expiryMonth) {
+    public CardVM expiryMonth(Integer expiryMonth) {
         this.expiryMonth = expiryMonth;
+        return this;
     }
 
     public Integer getExpiryYear() {
         return expiryYear;
     }
 
-    public void setExpiryYear(Integer expiryYear) {
+    public CardVM expiryYear(Integer expiryYear) {
         this.expiryYear = expiryYear;
+        return this;
     }
 }
