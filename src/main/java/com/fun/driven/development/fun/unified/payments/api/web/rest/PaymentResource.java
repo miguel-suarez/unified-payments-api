@@ -1,18 +1,15 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
-import com.fun.driven.development.fun.unified.payments.api.domain.User;
 import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
 import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
 import com.fun.driven.development.fun.unified.payments.api.service.TransactionService;
 import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
-import com.fun.driven.development.fun.unified.payments.api.service.UserService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMethodCredentialDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.TransactionDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.UserDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleRequestVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleResultVM;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
@@ -27,7 +24,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,14 +41,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class PaymentResource {
 
-    @Value("${jhipster.clientApp.name}")
-    private String applicationName;
-
     @Autowired
     private MerchantService merchantService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PaymentMethodCredentialService credentialService;
@@ -89,15 +79,15 @@ public class PaymentResource {
                   tags={ "payment" })
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successfully processed", response = SaleResultVM.class),
-        @ApiResponse(code = 400, message = "Invalid input data supplied"),
-        @ApiResponse(code = 401, message = "Authentication information is missing or invalid"),
-        @ApiResponse(code = 403, message = "User isn't allow to perform the requested action"),
-        @ApiResponse(code = 500, message = "Sorry we can't process this request at the moment"),
-        @ApiResponse(code = 502, message = "Invalid response received from third party server")})
+        @ApiResponse(code = 400, message = "Invalid input data supplied", response = SaleResultVM.class),
+        @ApiResponse(code = 401, message = "Authentication information is missing or invalid", response = SaleResultVM.class),
+        @ApiResponse(code = 403, message = "User isn't allow to perform the requested action", response = SaleResultVM.class),
+        @ApiResponse(code = 500, message = "Sorry we can't process this request at the moment", response = SaleResultVM.class),
+        @ApiResponse(code = 502, message = "Invalid response received from third party server", response = SaleResultVM.class)})
     @PostMapping(value = "/v1/unified/payments/sale",
         produces = { "application/json" },
         consumes = { "application/json" })
-    public ResponseEntity<SaleResultVM> submitSale(@ApiParam(required=true)
+    public ResponseEntity<SaleResultVM> submitSale(@ApiParam(value = "Merchant reference", required=true)
                                                         @RequestHeader(value="X-Unified-Payments-Merchant-Reference")
                                                         String merchantReference,
                                                    @ApiParam(value = "Details of the Sale payment", required=true )
@@ -189,15 +179,7 @@ public class PaymentResource {
     }
 
     private Optional<ResponseEntity<SaleResultVM>> validateUserMerchant(String merchantReference) {
-        Optional<User> authorizedUser = userService.getUserWithAuthorities();
-        Long authorizedUserId = authorizedUser.isPresent() ? authorizedUser.get().getId() : -1;
-        Optional<MerchantDTO> merchantOptional = merchantService.findOneByReference(merchantReference);
-        MerchantDTO merchantDTO = merchantOptional.orElseGet(MerchantDTO::new);
-        Optional<UserDTO> userDto = merchantDTO.getUsers()
-                                               .stream()
-                                               .filter(u -> u.getId().equals(authorizedUserId))
-                                               .findFirst();
-        if (userDto.isEmpty()) {
+        if (merchantService.isNotAuthorizedUserOwnedByMerchant(merchantReference)) {
             SaleResultVM result = new SaleResultVM().resultCode(SaleResultVM.ResultCodeEnum.VALIDATION_ERROR)
                                                     .resultDescription("User doesn't have enough credentials to access resource");
             return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body(result));

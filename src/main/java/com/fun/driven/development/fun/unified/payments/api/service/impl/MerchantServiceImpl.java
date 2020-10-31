@@ -1,9 +1,12 @@
 package com.fun.driven.development.fun.unified.payments.api.service.impl;
 
 import com.fun.driven.development.fun.unified.payments.api.domain.Merchant;
+import com.fun.driven.development.fun.unified.payments.api.domain.User;
 import com.fun.driven.development.fun.unified.payments.api.repository.MerchantRepository;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
+import com.fun.driven.development.fun.unified.payments.api.service.UserService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.UserDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.mapper.MerchantMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +30,12 @@ public class MerchantServiceImpl implements MerchantService {
 
     private final MerchantMapper merchantMapper;
 
-    public MerchantServiceImpl(MerchantRepository merchantRepository, MerchantMapper merchantMapper) {
+    private final UserService userService;
+
+    public MerchantServiceImpl(MerchantRepository merchantRepository, MerchantMapper merchantMapper, UserService userService) {
         this.merchantRepository = merchantRepository;
         this.merchantMapper = merchantMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -67,6 +73,19 @@ public class MerchantServiceImpl implements MerchantService {
         log.debug("Request to get Merchant : {}", reference);
         return merchantRepository.findOneWithEagerRelationshipsByReference(reference)
                                  .map(merchantMapper::toDto);
+    }
+
+    @Override
+    public boolean isNotAuthorizedUserOwnedByMerchant(String reference) {
+        Optional<User> authorizedUser = userService.getUserWithAuthorities();
+        Long authorizedUserId = authorizedUser.isPresent() ? authorizedUser.get().getId() : -1;
+        Optional<MerchantDTO> merchantOptional = findOneByReference(reference);
+        MerchantDTO merchantDTO = merchantOptional.orElseGet(MerchantDTO::new);
+        Optional<UserDTO> userDto = merchantDTO.getUsers()
+                                               .stream()
+                                               .filter(u -> u.getId().equals(authorizedUserId))
+                                               .findFirst();
+        return userDto.isEmpty();
     }
 
     @Override

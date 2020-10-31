@@ -22,5 +22,7 @@ public interface MerchantService {
 
     Optional<MerchantDTO> findOneByReference(String reference);
 
+    boolean isNotAuthorizedUserOwnedByMerchant(String reference);
+
     void delete(Long id);
 }
