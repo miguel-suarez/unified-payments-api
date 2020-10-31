@@ -33,11 +33,15 @@ public class PaymentResultVM {
     @ApiModelProperty(example = "19999160406806200009")
     private String reference;
 
+    @JsonIgnore
+    private String processorResult;
+
     public static PaymentResultVM fromSaleResult(SaleResult saleResult) {
         ResultCodeEnum resultCodeEnum = ResultCodeEnum.valueOf(saleResult.getResultCode().name());
         return new PaymentResultVM().resultCode(resultCodeEnum)
                                     .resultDescription(saleResult.getResultDescription())
-                                    .reference(saleResult.getReference());
+                                    .reference(saleResult.getReference())
+                                    .processorResult(saleResult.getProcessorResult());
     }
 
     public PaymentResultVM resultCode(ResultCodeEnum resultCode) {
@@ -64,6 +68,15 @@ public class PaymentResultVM {
 
     public PaymentResultVM reference(String reference) {
         this.reference = reference;
+        return this;
+    }
+
+    public String getProcessorResult() {
+        return processorResult;
+    }
+
+    public PaymentResultVM processorResult(String processorResult) {
+        this.processorResult = processorResult;
         return this;
     }
 
