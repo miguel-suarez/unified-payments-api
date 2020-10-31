@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = FunUnifiedPaymentsApiApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
 public class PaymentResourceIT {
 
     private static final String ENDPOINT_URL = "/api/v1/unified/payments/sale";
 
     @Autowired
-    private MockMvc restMerchantMockMvc;
+    private MockMvc restPaymentMock;
 
     @Autowired
     private TransactionService transactionService;
@@ -49,11 +47,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isOk());
+                       .andExpect(status().isOk());
 
         List<TransactionDTO> transactions = transactionService.findAll();
         assertThat(transactions).hasSize(tableSizeBefore + 1);
@@ -71,11 +69,11 @@ public class PaymentResourceIT {
     void saleWithoutCurrencyCode() throws Exception {
         SaleRequestVM request = new SaleRequestVM().amountInCents(101L)
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isOk());
+                       .andExpect(status().isOk());
     }
 
     @Test
@@ -85,11 +83,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isUnauthorized());
+                       .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -99,11 +97,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                    .contentType(MediaType.APPLICATION_JSON)
                                    .content(TestUtil.convertObjectToJsonBytes(request))
                                    .header(Constants.MERCHANT_HEADER,"xyz"))
-                           .andExpect(status().isUnauthorized());
+                       .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -114,11 +112,11 @@ public class PaymentResourceIT {
                                                    .currencyIsoCode("EUR")
                                                    .paymentProcessor("invalid")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                    .contentType(MediaType.APPLICATION_JSON)
                                    .content(TestUtil.convertObjectToJsonBytes(request))
                                    .header(Constants.MERCHANT_HEADER,"xyz"))
-                           .andExpect(status().isUnauthorized());
+                       .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -128,11 +126,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Raspberry");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"atom"))
-                           .andExpect(status().is5xxServerError());
+                       .andExpect(status().is5xxServerError());
     }
 
     @Test
@@ -142,11 +140,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isForbidden());
+                       .andExpect(status().isForbidden());
     }
 
     @Test
@@ -156,11 +154,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(null)
                                                    .currencyIsoCode("EUR")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isBadRequest());
+                       .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -170,11 +168,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(102L)
                                                    .currencyIsoCode("EUR")
                                                    .token("Raspberry");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isBadRequest());
+                       .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -183,11 +181,11 @@ public class PaymentResourceIT {
     void saleWithoutToken() throws Exception {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isBadRequest());
+                       .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -197,11 +195,11 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("EUR")
                                                    .token("invalid");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isBadRequest());
+                       .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -211,10 +209,10 @@ public class PaymentResourceIT {
         SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
                                                    .currencyIsoCode("OOO")
                                                    .token("Racket");
-        restMerchantMockMvc.perform(post((ENDPOINT_URL))
+        restPaymentMock.perform(post((ENDPOINT_URL))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(TestUtil.convertObjectToJsonBytes(request))
                                     .header(Constants.MERCHANT_HEADER,"hardware"))
-                           .andExpect(status().isBadRequest());
+                       .andExpect(status().isBadRequest());
     }
 }
