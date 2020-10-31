@@ -1,6 +1,7 @@
 package com.fun.driven.development.fun.unified.payments.api.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
@@ -17,19 +18,20 @@ import java.time.Instant;
  */
 @ApiModel(description = "Fun unified payment token")
 @JsonRootName(value = "Token")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UnifiedPaymentTokenDTO implements Serializable {
 
     @JsonIgnore
     private Long id;
 
     @JsonProperty("token")
-    @ApiModelProperty(value = "")
+    @ApiModelProperty
     @NotNull
     @Size(max = 500)
     private String token;
 
     @JsonProperty("validUntil")
-    @ApiModelProperty(example = "2020-10-16T15:01:54Z", value = "")
+    @ApiModelProperty(example = "2020-10-16T15:01:54Z")
     @Pattern(regexp="/^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(\\.\\d+)?(([+-]\\d\\d:\\d\\d)|Z)?$/i")
     private Instant validUntil;
 
