@@ -1,12 +1,5 @@
 package com.fun.driven.development.fun.unified.payments.api.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,26 +9,17 @@ import java.time.Instant;
 /**
  * A DTO for the {@link com.fun.driven.development.fun.unified.payments.api.domain.UnifiedPaymentToken} entity.
  */
-@ApiModel(description = "Fun unified payment token")
-@JsonRootName(value = "Token")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UnifiedPaymentTokenDTO implements Serializable {
 
-    @JsonIgnore
     private Long id;
 
-    @JsonProperty("token")
-    @ApiModelProperty
     @NotNull
     @Size(max = 500)
     private String token;
 
-    @JsonProperty("validUntil")
-    @ApiModelProperty(example = "2020-10-16T15:01:54Z")
     @Pattern(regexp="/^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(\\.\\d+)?(([+-]\\d\\d:\\d\\d)|Z)?$/i")
     private Instant validUntil;
 
-    @JsonIgnore
     private Long merchantId;
 
     public Long getId() {
@@ -52,6 +36,11 @@ public class UnifiedPaymentTokenDTO implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public UnifiedPaymentTokenDTO token(String token) {
+        this.token = token;
+        return this;
     }
 
     public Instant getValidUntil() {
