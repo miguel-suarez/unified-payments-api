@@ -69,7 +69,7 @@ public class TokenResource {
         Optional<ResponseEntity<TokenVM>> validationError = validateInput(merchantReference, card);
         if (validationError.isPresent()) return validationError.get();
 
-        UnifiedPaymentTokenDTO tokenDTO = tokenGenerator.of(card);
+        UnifiedPaymentTokenDTO tokenDTO = tokenGenerator.newToken();
 
         tokenService.save(fillIds(merchantReference,tokenDTO));
         return ResponseEntity.ok().body(TokenVM.from(tokenDTO));
