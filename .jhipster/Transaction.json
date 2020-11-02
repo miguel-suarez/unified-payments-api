@@ -15,7 +15,7 @@
     {
       "fieldName": "transactionType",
       "fieldType": "TransactionType",
-      "fieldValues": "Sale,Refund,Payout",
+      "fieldValues": "SALE,REFUND,PAYOUT",
       "fieldValidateRules": ["required"]
     },
     {

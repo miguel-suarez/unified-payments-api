@@ -1,11 +1,11 @@
 id;name;type;tokenizable;url;active
-1;Garden;Code;false;https://ford.name;false
-2;back-end Coordinator Trail;Mobile;true;http://josefa.com;true
-3;open-source model Village;Card;false;https://claudie.com;false
-4;solid state;Card;false;https://mallory.com;false
-5;XSS Rapid sensor;Mobile;true;https://kelli.biz;true
-6;Lead B2B Hong Kong Dollar;Card;true;http://frida.name;false
-7;capacitor Personal Loan Account;Code;true;https://eriberto.org;false
-8;multi-state Savings Account iterate;Card;true;https://whitney.org;false
-9;Interactions Buckinghamshire Saint Pierre and Miquelon;Mobile;true;https://quinn.name;true
-10;Automated;Card;true;http://angelo.com;true
+1;Garden;CODE;false;https://ford.name;false
+2;back-end Coordinator Trail;MOBILE;true;http://josefa.com;true
+3;open-source model Village;CARD;false;https://claudie.com;false
+4;solid state;CARD;false;https://mallory.com;false
+5;XSS Rapid sensor;MOBILE;true;https://kelli.biz;true
+6;Lead B2B Hong Kong Dollar;CARD;true;http://frida.name;false
+7;capacitor Personal Loan Account;CODE;true;https://eriberto.org;false
+8;multi-state Savings Account iterate;CARD;true;https://whitney.org;false
+9;Interactions Buckinghamshire Saint Pierre and Miquelon;MOBILE;true;https://quinn.name;true
+10;Automated;CARD;true;http://angelo.com;true

@@ -1,2 +1,11 @@
-id;amount;fun_reference;transaction_type;transaction_date;result;processor_result;external_reference;merchant_id;currency_id;unified_payment_token_id;payment_method_id
-1;2849;B2C Ergonomic Concrete So;Payout;2020-10-11T20:05:41;REFUSED;Operations cross-platform Shirt;red invoice;1;1;1;1
+id;amount;fun_reference;transaction_type;transaction_date;result;processor_result;external_reference;merchant_id;currency_id;payment_method_id;unified_payment_token_id
+1;2849;B2C Ergonomic Concrete So;PAYOUT;2020-10-11T20:05:41;REFUSED;Operations cross-platform Shirt;red invoice;1;1;1;1
+2;38347;Garden Haiti;SALE;2020-10-12T12:21:44;CANCELLED;New Caledonia Auto Loan Account Zimbabwe;Licensed Sleek Fresh Ball;2;2;2;2
+3;29343;Technician next-generatio;SALE;2020-10-12T18:15:58;ERROR;optimize;Awesome Berkshire Pizza;3;3;3;3
+4;88371;programming deliver withd;REFUND;2020-10-12T01:26:34;CANCELLED;connecting Bacon optical;olive IB;4;4;4;4
+5;21598;Clothing port;SALE;2020-10-12T17:56:22;PENDING;Pizza Forward Montana;hard drive optical;5;5;5;5
+6;23270;Tools Svalbard & Jan Maye;PAYOUT;2020-10-12T04:40:38;ERROR;applications SMTP;Developer;6;6;6;6
+7;20838;calculate Awesome Persona;REFUND;2020-10-12T17:43:36;SUCCESS;Rustic Alabama;Malaysia;7;7;7;7
+8;67464;ADP mint green Health;SALE;2020-10-12T03:16:20;CANCELLED;withdrawal synergies;digital Pitcairn Islands ;8;8;8;8
+9;26897;Auto Loan Account softwar;PAYOUT;2020-10-12T13:20:15;PENDING;parsing object-oriented Coves;Tuna overriding;9;9;9;9
+10;40355;Bedfordshire secured line;REFUND;2020-10-12T18:14:34;PENDING;Concrete;Health Division;10;10;10;10

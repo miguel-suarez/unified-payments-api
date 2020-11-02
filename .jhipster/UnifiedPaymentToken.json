@@ -8,6 +8,18 @@
       "fieldValidateRulesMaxlength": "500"
     },
     {
+      "fieldName": "type",
+      "fieldType": "PaymentMethodType",
+      "fieldValues": "CARD,MOBILE,CODE",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "payload",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "1000"
+    },
+    {
       "fieldName": "validUntil",
       "fieldType": "Instant"
     }

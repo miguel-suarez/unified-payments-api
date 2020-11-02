@@ -1,12 +1,22 @@
 package com.fun.driven.development.fun.unified.payments.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.PaymentMethodType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -26,6 +36,16 @@ public class UnifiedPaymentToken implements Serializable {
     @Size(max = 500)
     @Column(name = "token", length = 500, nullable = false, unique = true)
     private String token;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private PaymentMethodType type;
+
+    @NotNull
+    @Size(max = 1000)
+    @Column(name = "payload", length = 1000, nullable = false)
+    private String payload;
 
     @Column(name = "valid_until")
     private Instant validUntil;
@@ -55,6 +75,32 @@ public class UnifiedPaymentToken implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public PaymentMethodType getType() {
+        return type;
+    }
+
+    public UnifiedPaymentToken type(PaymentMethodType type) {
+        this.type = type;
+        return this;
+    }
+
+    public void setType(PaymentMethodType type) {
+        this.type = type;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public UnifiedPaymentToken payload(String payload) {
+        this.payload = payload;
+        return this;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
     }
 
     public Instant getValidUntil() {
@@ -106,6 +152,8 @@ public class UnifiedPaymentToken implements Serializable {
         return "UnifiedPaymentToken{" +
             "id=" + getId() +
             ", token='" + getToken() + "'" +
+            ", type='" + getType() + "'" +
+            ", payload='" + getPayload() + "'" +
             ", validUntil='" + getValidUntil() + "'" +
             "}";
     }

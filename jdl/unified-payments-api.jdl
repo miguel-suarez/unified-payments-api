@@ -6,9 +6,9 @@ entity Merchant {
 }
 
 enum PaymentMethodType {
-	Card,
-    Mobile,
-    Code
+    CARD,
+    MOBILE,
+    CODE
 }
 
 entity PaymentMethod {
@@ -25,9 +25,9 @@ entity PaymentMethodCredential {
 }
 
 enum UnavailableType {
-	Maintenance,
-    UnderAttack,
-    Overload
+	MAINTENANCE,
+    UNDERATTACK,
+    OVERLOAD
 }
 
 entity PaymentMethodUnavailable {
@@ -41,6 +41,8 @@ entity PaymentMethodUnavailable {
  */
 entity UnifiedPaymentToken {
     token String required maxlength(500) unique,
+  	type PaymentMethodType required,
+    payload String required maxlength(1000),
     validUntil Instant,
 }
 
@@ -51,9 +53,9 @@ entity Currency {
 }
 
 enum TransactionType {
-	Sale,
-    Refund,
-    Payout
+	SALE,
+    REFUND,
+    PAYOUT
 }
 
 enum UnifiedTransactionResult {

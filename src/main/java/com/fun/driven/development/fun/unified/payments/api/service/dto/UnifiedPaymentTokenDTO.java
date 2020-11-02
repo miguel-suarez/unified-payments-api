@@ -1,7 +1,9 @@
 package com.fun.driven.development.fun.unified.payments.api.service.dto;
 
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.PaymentMethodType;
+import io.swagger.annotations.ApiModel;
+
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
@@ -9,6 +11,7 @@ import java.time.Instant;
 /**
  * A DTO for the {@link com.fun.driven.development.fun.unified.payments.api.domain.UnifiedPaymentToken} entity.
  */
+@ApiModel(description = "Fun unified payment token")
 public class UnifiedPaymentTokenDTO implements Serializable {
 
     private Long id;
@@ -17,7 +20,13 @@ public class UnifiedPaymentTokenDTO implements Serializable {
     @Size(max = 500)
     private String token;
 
-    @Pattern(regexp="/^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(\\.\\d+)?(([+-]\\d\\d:\\d\\d)|Z)?$/i")
+    @NotNull
+    private PaymentMethodType type;
+
+    @NotNull
+    @Size(max = 1000)
+    private String payload;
+
     private Instant validUntil;
 
     private Long merchantId;
@@ -34,13 +43,25 @@ public class UnifiedPaymentTokenDTO implements Serializable {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public UnifiedPaymentTokenDTO token(String token) {
         this.token = token;
         return this;
+    }
+
+    public PaymentMethodType getType() {
+        return type;
+    }
+
+    public void setType(PaymentMethodType type) {
+        this.type = type;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
     }
 
     public Instant getValidUntil() {
@@ -82,6 +103,8 @@ public class UnifiedPaymentTokenDTO implements Serializable {
         return "UnifiedPaymentTokenDTO{" +
             "id=" + getId() +
             ", token='" + getToken() + "'" +
+            ", type='" + getType() + "'" +
+            ", payload='" + getPayload() + "'" +
             ", validUntil='" + getValidUntil() + "'" +
             ", merchantId=" + getMerchantId() +
             "}";

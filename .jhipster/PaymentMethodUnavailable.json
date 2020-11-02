@@ -4,7 +4,7 @@
     {
       "fieldName": "type",
       "fieldType": "UnavailableType",
-      "fieldValues": "Maintenance,UnderAttack,Overload",
+      "fieldValues": "MAINTENANCE,UNDERATTACK,OVERLOAD",
       "fieldValidateRules": ["required"]
     },
     {

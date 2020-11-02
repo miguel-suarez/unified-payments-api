@@ -10,7 +10,7 @@
     {
       "fieldName": "type",
       "fieldType": "PaymentMethodType",
-      "fieldValues": "Card,Mobile,Code",
+      "fieldValues": "CARD,MOBILE,CODE",
       "fieldValidateRules": ["required"]
     },
     {

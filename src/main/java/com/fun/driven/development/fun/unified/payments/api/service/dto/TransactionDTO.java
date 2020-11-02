@@ -49,7 +49,7 @@ public class TransactionDTO implements Serializable {
         TransactionDTO tx = new TransactionDTO();
         tx.amount = request.getAmountInCents();
         tx.funReference = result.getReference();
-        tx.transactionType = TransactionType.Sale;
+        tx.transactionType = TransactionType.SALE;
         tx.transactionDate = Instant.now();
         tx.result = UnifiedTransactionResult.valueOf(result.getResultCode().name());
         tx.processorResult = result.getProcessorResult();

@@ -16,6 +16,12 @@
             <column name="token" type="varchar(500)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="ux_unified_payment_token_token" />
             </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="payload" type="varchar(1000)">
+                <constraints nullable="false" />
+            </column>
             <column name="valid_until" type="datetime">
                 <constraints nullable="true" />
             </column>
@@ -47,6 +53,8 @@
                   tableName="unified_payment_token">
             <column name="id" type="numeric"/>
             <column name="token" type="string"/>
+            <column name="type" type="string"/>
+            <column name="payload" type="string"/>
             <column name="valid_until" type="datetime"/>
             <column name="merchant_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
