@@ -1,5 +1,7 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.TransactionType;
+import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.UnifiedTransactionResult;
 import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
 import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.Instant;
 import java.util.Optional;
 
 @RestController
@@ -99,7 +102,7 @@ public class PaymentResource {
         SaleResult saleResult = paymentGateway.using(requestPair.getFirst()).sale(requestPair.getSecond());
         SaleResultVM result = SaleResultVM.fromGatewayResult(saleResult);
 
-        TransactionDTO transaction = TransactionDTO.fromSale(request, result);
+        TransactionDTO transaction = vmToDTO(request, result);
         transactionService.save(fillIds(merchantReference, request, transaction));
         if (result.isOK()) return ResponseEntity.ok().body(result);
         return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
@@ -132,6 +135,18 @@ public class PaymentResource {
                                          .merchantCredentialsJson(credentialJson)
                                          .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
+    }
+
+    public TransactionDTO vmToDTO(SaleRequestVM request, SaleResultVM result) {
+        TransactionDTO tx = new TransactionDTO();
+        tx.setAmount(request.getAmountInCents());
+        tx.setFunReference(result.getReference());
+        tx.setTransactionType(TransactionType.SALE);
+        tx.setTransactionDate(Instant.now());
+        tx.setResult(UnifiedTransactionResult.valueOf(result.getResultCode().name()));
+        tx.setProcessorResult(result.getProcessorResult());
+        tx.setExternalReference(request.getExternalReference());
+        return tx;
     }
 
     private TransactionDTO fillIds(String merchantReference, SaleRequestVM request, TransactionDTO transaction) {
