@@ -58,7 +58,7 @@ class TokenResourceIT {
         assertThat(tokens).hasSize(tableSizeBefore + 1);
         UnifiedPaymentTokenDTO token = tokens.get(tokens.size() -1);
         assertThat(token.getMerchantId()).isEqualTo(1L);
-        assertThat(token.getToken()).hasSize(64);
+        assertThat(token.getToken()).hasSize(22);
     }
 
     @Test
