@@ -64,6 +64,26 @@ class TokenResourceIT {
     @Test
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
+    void tokenizeAlreadyTokenizedCard() throws Exception {
+        int tableSizeBefore = unifiedPaymentTokenService.findAll().size();
+
+        CardVM request = new CardVM().cardNumber("4111111111111111")
+                                     .expiryMonth(5)
+                                     .expiryYear(2030);
+
+        restTokenMock.perform(post((ENDPOINT_URL))
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .content(TestUtil.convertObjectToJsonBytes(request))
+                                 .header(Constants.MERCHANT_HEADER,"hardware"))
+                     .andExpect(status().isOk());
+
+        List<UnifiedPaymentTokenDTO> tokens = unifiedPaymentTokenService.findAll();
+        assertThat(tokens).hasSize(tableSizeBefore); // No new tokens are created
+    }
+
+    @Test
+    @Transactional
+    @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void tokenizeWithInvalidCardNumber() throws Exception {
         CardVM request = new CardVM().cardNumber("54654654665")
                                      .expiryMonth(1)
