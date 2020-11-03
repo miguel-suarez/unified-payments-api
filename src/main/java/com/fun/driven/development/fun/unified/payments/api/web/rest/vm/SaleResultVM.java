@@ -3,11 +3,15 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
 
+@ApiModel(description = "Result of the processed Sale or error details")
+@JsonRootName(value = "SaleResponse")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SaleResultVM {
 

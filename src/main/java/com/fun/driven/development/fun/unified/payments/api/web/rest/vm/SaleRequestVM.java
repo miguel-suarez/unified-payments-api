@@ -1,8 +1,10 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.Max;
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+@ApiModel(description = "Details of the Sale to be processed")
+@JsonRootName(value = "SaleRequest")
 public class SaleRequestVM {
 
     @JsonProperty
