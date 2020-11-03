@@ -1,8 +1,10 @@
 package com.fun.driven.development.fun.unified.payments.vault;
 
+import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+
 public interface PaymentDetailsVault {
 
-    UnifiedToken tokenize(Card card);
+    UnifiedPaymentTokenDTO tokenize(Long merchantId, Card card);
 
-    Card retrieveCard(UnifiedToken token);
+    Card retrieveCard(String token);
 }
