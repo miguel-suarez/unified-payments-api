@@ -31,6 +31,13 @@ public class UnifiedPaymentTokenDTO implements Serializable {
 
     private Long merchantId;
 
+    public UnifiedPaymentTokenDTO() {
+    }
+
+    public UnifiedPaymentTokenDTO(@NotNull @Size(max = 500) String token) {
+        this.token = token;
+    }
+
     public Long getId() {
         return id;
     }
@@ -52,16 +59,18 @@ public class UnifiedPaymentTokenDTO implements Serializable {
         return type;
     }
 
-    public void setType(PaymentMethodType type) {
+    public UnifiedPaymentTokenDTO type(PaymentMethodType type) {
         this.type = type;
+        return this;
     }
 
     public String getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
+    public UnifiedPaymentTokenDTO payload(String payload) {
         this.payload = payload;
+        return this;
     }
 
     public Instant getValidUntil() {
@@ -76,8 +85,9 @@ public class UnifiedPaymentTokenDTO implements Serializable {
         return merchantId;
     }
 
-    public void setMerchantId(Long merchantId) {
+    public UnifiedPaymentTokenDTO merchantId(Long merchantId) {
         this.merchantId = merchantId;
+        return this;
     }
 
     @Override
