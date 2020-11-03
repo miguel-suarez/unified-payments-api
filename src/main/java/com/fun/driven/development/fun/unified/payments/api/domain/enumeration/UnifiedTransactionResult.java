@@ -1,5 +1,11 @@
 package com.fun.driven.development.fun.unified.payments.api.domain.enumeration;
 
 public enum UnifiedTransactionResult {
-    CANCELLED, ERROR, PENDING, REFUSED, SUCCESS
+    AUTHORIZED,
+    CANCELLED,
+    ERROR,
+    PENDING,
+    REFUSED,
+    SUCCESS,
+    VALIDATION_ERROR
 }

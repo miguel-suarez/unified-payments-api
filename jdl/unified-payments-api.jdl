@@ -59,11 +59,13 @@ enum TransactionType {
 }
 
 enum UnifiedTransactionResult {
-	CANCELLED,
+    AUTHORIZED,
+    CANCELLED,
     ERROR,
     PENDING,
     REFUSED,
-    SUCCESS
+    SUCCESS,
+    VALIDATION_ERROR
 }
 
 entity Transaction {
