@@ -81,7 +81,7 @@ public class CardVM {
 
     @Override
     public String toString() {
-        return "CardVM{" + "cardNumber='xxxxxxxxxxxxx\'" +
+        return "CardVM{" + "cardNumber='xxxxxxxxxxxxx'" +
             ", expiryMonth=" + expiryMonth +
             ", expiryYear=" + expiryYear + '}';
     }
