@@ -19,6 +19,7 @@ import com.fun.driven.development.fun.unified.payments.gateway.core.PaymentGatew
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
+import com.fun.driven.development.fun.unified.payments.vault.service.StrongCryptography;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,6 +65,9 @@ public class PaymentResource {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private StrongCryptography strongCryptography;
 
     /**
      * POST /v1/unified/payments/sale : Submits a sale payment request
@@ -129,7 +133,12 @@ public class PaymentResource {
         long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
         Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(
                                                                                 paymentMethodId, merchantId);
-        String credentialJson = credential.isPresent() ? credential.get().getCredentials() : "";
+        String credentialJson = "";
+
+        if (credential.isPresent()) {
+           //TODO probably we want to use a different key for the credentials than for the cards
+           credentialJson = strongCryptography.decrypt(credential.get().getCredentials());
+        }
         String reference = referenceGenerator.generate();
         SaleRequest saleRequest = request.toSaleRequest(reference)
                                          .merchantId(merchantId)
