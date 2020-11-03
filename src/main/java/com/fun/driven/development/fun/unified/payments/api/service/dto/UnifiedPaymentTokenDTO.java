@@ -77,8 +77,9 @@ public class UnifiedPaymentTokenDTO implements Serializable {
         return validUntil;
     }
 
-    public void setValidUntil(Instant validUntil) {
+    public UnifiedPaymentTokenDTO validUntil(Instant validUntil) {
         this.validUntil = validUntil;
+        return this;
     }
 
     public Long getMerchantId() {
@@ -88,6 +89,15 @@ public class UnifiedPaymentTokenDTO implements Serializable {
     public UnifiedPaymentTokenDTO merchantId(Long merchantId) {
         this.merchantId = merchantId;
         return this;
+    }
+
+    public String partialPayload() {
+        Double tenPercent = getPayload().length() * 0.1;
+        int limit = 1;
+        if (tenPercent > 0) {
+            limit = tenPercent.intValue();
+        }
+        return getPayload().substring(0,  limit);
     }
 
     @Override
@@ -114,7 +124,7 @@ public class UnifiedPaymentTokenDTO implements Serializable {
             "id=" + getId() +
             ", token='" + getToken() + "'" +
             ", type='" + getType() + "'" +
-            ", payload='" + getPayload() + "'" +
+            ", payload (partial)='" + partialPayload() + "'" +
             ", validUntil='" + getValidUntil() + "'" +
             ", merchantId=" + getMerchantId() +
             "}";
