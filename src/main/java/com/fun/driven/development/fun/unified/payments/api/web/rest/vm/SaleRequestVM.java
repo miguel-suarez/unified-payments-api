@@ -3,7 +3,6 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
-import com.fun.driven.development.fun.unified.payments.vault.UnifiedToken;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.Max;
@@ -96,7 +95,7 @@ public class SaleRequestVM {
     public SaleRequest toSaleRequest(String reference) {
         return new SaleRequest().amountInCents(amountInCents)
                                 .currencyIsoCode(currencyIsoCode)
-                                .token(new UnifiedToken(token))
+                                .token(token)
                                 .reference(reference);
     }
 

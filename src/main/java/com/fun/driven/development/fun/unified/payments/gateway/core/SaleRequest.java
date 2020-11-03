@@ -1,12 +1,10 @@
 package com.fun.driven.development.fun.unified.payments.gateway.core;
 
-import com.fun.driven.development.fun.unified.payments.vault.UnifiedToken;
-
 public class SaleRequest {
 
     private String reference;
 
-    private UnifiedToken token;
+    private String token;
 
     private Long amountInCents;
 
@@ -23,11 +21,11 @@ public class SaleRequest {
         return this;
     }
 
-    public UnifiedToken getToken() {
+    public String getToken() {
         return token;
     }
 
-    public SaleRequest token(UnifiedToken token) {
+    public SaleRequest token(String token) {
         this.token = token;
         return this;
     }

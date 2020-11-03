@@ -3,7 +3,6 @@ package com.fun.driven.development.fun.unified.payments.gateway.processors;
 import com.fun.driven.development.fun.unified.payments.api.FunUnifiedPaymentsApiApp;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
-import com.fun.driven.development.fun.unified.payments.vault.UnifiedToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +27,7 @@ class BraintreeSaleProcessorTest {
         SaleRequest request = new SaleRequest().amountInCents(100L)
                                                .currencyIsoCode("EUR")
                                                .merchantCredentialsJson(merchantCredentials)
-                                               .token(new UnifiedToken("abc"))
+                                               .token("abc")
                                                .reference("12345");
         SaleResult result = braintreeSaleProcessor.sale(request);
         assertNotNull(result);
