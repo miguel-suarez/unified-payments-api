@@ -100,11 +100,7 @@ jhipster:
 
 # ===================================================================
 # Application specific properties
-# Add your own application properties here, see the ApplicationProperties class
-# to have type-safe configuration, like in the JHipsterProperties above
-#
-# More documentation is available at:
-# https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  tdes-key-material: fb9d38b0d5c72a57ad7a076d97a22c548fa43889a2d55701
