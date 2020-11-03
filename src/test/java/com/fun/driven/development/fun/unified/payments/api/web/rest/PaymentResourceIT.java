@@ -108,15 +108,15 @@ public class PaymentResourceIT {
     @Transactional
     @WithUserDetails(value = "system", userDetailsServiceBeanName = "userDetailsService")
     void saleWithWrongPaymentProcessor() throws Exception {
-        SaleRequestVM request = new SaleRequestVM().amountInCents(100L)
+        SaleRequestVM request = new SaleRequestVM().amountInCents(102L)
                                                    .currencyIsoCode("EUR")
                                                    .paymentProcessor("invalid")
                                                    .token("Racket");
         restPaymentMock.perform(post((ENDPOINT_URL))
                                    .contentType(MediaType.APPLICATION_JSON)
                                    .content(TestUtil.convertObjectToJsonBytes(request))
-                                   .header(Constants.MERCHANT_HEADER,"xyz"))
-                       .andExpect(status().isUnauthorized());
+                                   .header(Constants.MERCHANT_HEADER,"hardware"))
+                       .andExpect(status().isBadRequest());
     }
 
     @Test
