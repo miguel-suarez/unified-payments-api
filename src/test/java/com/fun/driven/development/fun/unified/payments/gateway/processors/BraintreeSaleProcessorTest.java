@@ -26,6 +26,7 @@ class BraintreeSaleProcessorTest {
             "\"privateKey\":\"invalid\"}";
         SaleRequest request = new SaleRequest().amountInCents(100L)
                                                .currencyIsoCode("EUR")
+                                               .merchantId(1)
                                                .merchantCredentialsJson(merchantCredentials)
                                                .token("abc")
                                                .reference("12345");

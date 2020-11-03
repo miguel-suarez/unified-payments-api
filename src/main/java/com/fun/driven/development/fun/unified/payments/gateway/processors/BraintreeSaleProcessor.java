@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest, Pair<Result<Transaction>, String>, BraintreeCredentials> {
@@ -57,12 +58,16 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
     public TransactionRequest toThirdPartyRequest(SaleRequest request) {
         BigDecimal amount = AmountConverter.fromBaseUnitToBigDecimal(request.getAmountInCents(),
                                                                      request.getCurrencyIsoCode());
-        Card card = vault.retrieveCard(request.getToken());
-        return new TransactionRequest().amount(amount)
-                                       .creditCard()
-                                       .number(card.getNumber())
-                                       .expirationDate(card.getExpirationMMSlashYYYY())
-                                       .done();
+        Optional<Card> card = vault.retrieveCard(request.getMerchantId(), request.getToken());
+        if (card.isEmpty()) {
+            log.error("Card details not found for request {}", request.getReference());
+            return new TransactionRequest().amount(amount).creditCard().done();
+        } else {
+            return new TransactionRequest().amount(amount).creditCard()
+                                           .number(card.get().getNumber())
+                                           .expirationDate(card.get().getExpirationMMSlashYYYY())
+                                           .done();
+        }
     }
 
     @Override

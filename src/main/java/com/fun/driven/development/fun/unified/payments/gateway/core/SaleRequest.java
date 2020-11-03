@@ -10,6 +10,8 @@ public class SaleRequest {
 
     private String currencyIsoCode;
 
+    private long merchantId;
+
     private String merchantCredentialsJson;
 
     public String getReference() {
@@ -54,6 +56,15 @@ public class SaleRequest {
 
     public SaleRequest merchantCredentialsJson(String merchantCredentialsJson) {
         this.merchantCredentialsJson = merchantCredentialsJson;
+        return this;
+    }
+
+    public long getMerchantId() {
+        return merchantId;
+    }
+
+    public SaleRequest merchantId(long merchantId) {
+        this.merchantId = merchantId;
         return this;
     }
 }

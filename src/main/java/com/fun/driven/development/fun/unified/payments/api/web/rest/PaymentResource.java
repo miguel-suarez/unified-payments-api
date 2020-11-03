@@ -124,14 +124,15 @@ public class PaymentResource {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private Pair<AvailableProcessor, SaleRequest> buildSaleRequest(String merchantReference, SaleRequestVM request) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
-        Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
+        long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
         Optional<AvailableProcessor> processor = AvailableProcessor.fromReference(request.getPaymentProcessor());
-        Long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
+        long paymentMethodId = processor.isPresent() ? processor.get().getPaymentMethodId() : -1;
         Optional<PaymentMethodCredentialDTO> credential = credentialService.findOneByPaymentMethodAndMerchant(
                                                                                 paymentMethodId, merchantId);
         String credentialJson = credential.isPresent() ? credential.get().getCredentials() : "";
         String reference = referenceGenerator.generate();
         SaleRequest saleRequest = request.toSaleRequest(reference)
+                                         .merchantId(merchantId)
                                          .merchantCredentialsJson(credentialJson)
                                          .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
