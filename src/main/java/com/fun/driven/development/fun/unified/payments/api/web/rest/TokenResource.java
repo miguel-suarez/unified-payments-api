@@ -1,12 +1,12 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
-import com.fun.driven.development.fun.unified.payments.api.service.TokenGenerator;
-import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.CardVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.TokenVM;
+import com.fun.driven.development.fun.unified.payments.vault.Card;
+import com.fun.driven.development.fun.unified.payments.vault.PaymentDetailsVault;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,10 +34,7 @@ public class TokenResource {
     private MerchantService merchantService;
 
     @Autowired
-    private UnifiedPaymentTokenService tokenService;
-
-    @Autowired
-    private TokenGenerator tokenGenerator;
+    private PaymentDetailsVault paymentDetailsVault;
 
     /**
      * POST /v1/unified/tokens : Generate a unified payment token for a card
@@ -69,17 +66,20 @@ public class TokenResource {
         Optional<ResponseEntity<TokenVM>> validationError = validateInput(merchantReference, card);
         if (validationError.isPresent()) return validationError.get();
 
-        UnifiedPaymentTokenDTO tokenDTO = tokenGenerator.newToken();
-
-        tokenService.save(fillIds(merchantReference,tokenDTO));
+        long merchantId = findMerchantId(merchantReference);
+        UnifiedPaymentTokenDTO tokenDTO = paymentDetailsVault.tokenize(merchantId, vmToDTO(card));
         return ResponseEntity.ok().body(TokenVM.from(tokenDTO));
     }
 
-    private UnifiedPaymentTokenDTO fillIds(String merchantReference, UnifiedPaymentTokenDTO tokenDTO) {
+    private Card vmToDTO(CardVM cardVM) {
+        return new Card().setNumber(cardVM.getCardNumber())
+                         .setExpirationMonth(cardVM.getExpiryMonth())
+                         .setExpirationYear(cardVM.getExpiryYear());
+    }
+
+    private long findMerchantId(String merchantReference) {
         Optional<MerchantDTO> merchantDTO = merchantService.findOneByReference(merchantReference);
-        Long merchantId = merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
-        tokenDTO.setMerchantId(merchantId);
-        return tokenDTO;
+        return merchantDTO.isPresent() ? merchantDTO.get().getId() : -1;
     }
 
     private Optional<ResponseEntity<TokenVM>> validateInput(String merchantReference, CardVM card) {
@@ -120,6 +120,5 @@ public class TokenResource {
         }
         return Optional.empty();
     }
-
 
 }
