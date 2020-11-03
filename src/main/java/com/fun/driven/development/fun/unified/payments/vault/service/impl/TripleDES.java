@@ -22,6 +22,9 @@ import java.security.spec.KeySpec;
  * Follows National Institute of Standards and Technology 800-131A Rev. 2
  * -> TDES (triple-length keys) / AES (128 bits and higher)
  * Recommendation for Block Cipher Modes of Operation: The CCM Mode for Authentication and Confidentiality
+ *
+ * DISCLAIMER: For a real life PCI compliant application the lifecycle and storage of the master key has
+ * higher security standards, but those are out of the scope of this project
  */
 @Service
 public class TripleDES implements StrongCryptography {
