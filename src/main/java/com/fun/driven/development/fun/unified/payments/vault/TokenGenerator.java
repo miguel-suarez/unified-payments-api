@@ -1,4 +1,4 @@
-package com.fun.driven.development.fun.unified.payments.api.service;
+package com.fun.driven.development.fun.unified.payments.vault;
 
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 
