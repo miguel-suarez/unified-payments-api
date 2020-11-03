@@ -1,6 +1,5 @@
 package com.fun.driven.development.fun.unified.payments.api;
 
-import com.fun.driven.development.fun.unified.payments.api.config.ApplicationProperties;
 import io.github.jhipster.config.DefaultProfileUtil;
 import io.github.jhipster.config.JHipsterConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @SpringBootApplication
-@EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
+@EnableConfigurationProperties({LiquibaseProperties.class})
 @ComponentScan(basePackages = {"com.fun.driven.development.fun.unified.payments"})
 public class FunUnifiedPaymentsApiApp {
 
