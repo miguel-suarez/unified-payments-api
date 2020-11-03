@@ -19,7 +19,6 @@ class TripleDESTest {
     public void encrypt() {
         String text = "Everything is awesome!";
         String encrypted = tripleDES.encrypt(text);
-        System.out.println(encrypted);
         String decrypted = tripleDES.decrypt(encrypted);
         assertThat(decrypted).isEqualTo(text);
     }
