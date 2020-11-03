@@ -12,7 +12,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
@@ -20,8 +20,9 @@ import java.security.spec.KeySpec;
 /**
  * Follows cardholder store requirements PCI DSS v3.2.1, May 2018
  * Follows National Institute of Standards and Technology 800-131A Rev. 2
- * -> TDES (triple-length keys) / AES (128 bits and higher)
- * Recommendation for Block Cipher Modes of Operation: The CCM Mode for Authentication and Confidentiality
+ *  TDES (triple-length keys)
+ *  AES (128 bits and higher) Recommendation for Block Cipher Modes of Operation:
+ *                            The CCM Mode for Authentication and Confidentiality
  *
  * DISCLAIMER: For a real life PCI compliant application the lifecycle and storage of the master key has
  * higher security standards, but those are out of the scope of this project
@@ -30,14 +31,11 @@ import java.security.spec.KeySpec;
 public class TripleDES implements StrongCryptography {
 
     private static final Logger log = LoggerFactory.getLogger(TripleDES.class);
-    private static final String UNICODE_FORMAT = "UTF8";
-    public static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
-    //public static final String DESEDE_ENCRYPTION_SCHEME = "DESede/CBC/PKCS5Padding";
+    public static final String DESEDE_KEY_FACTORY = "DESede";
+    public static final String DESEDE_ENCRYPTION_SCHEME = "DESede/ECB/PKCS5Padding";
 
     @Value("${application.tdes-key-material}")
     private String keyMaterial;
-    private KeySpec ks;
-    private SecretKeyFactory skf;
     private Cipher cipher;
     private SecretKey key;
 
@@ -46,10 +44,10 @@ public class TripleDES implements StrongCryptography {
         if (keyMaterial == null) {
             throw new IllegalArgumentException("Key material not defined for current environment");
         }
-        ks = new DESedeKeySpec(Hex.decode(keyMaterial));
-        skf = SecretKeyFactory.getInstance(DESEDE_ENCRYPTION_SCHEME);
+        KeySpec ks = new DESedeKeySpec(Hex.decode(keyMaterial));
+        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(DESEDE_KEY_FACTORY);
         cipher = Cipher.getInstance(DESEDE_ENCRYPTION_SCHEME);
-        key = skf.generateSecret(ks);
+        key = secretKeyFactory.generateSecret(ks);
     }
 
     @Override
@@ -57,10 +55,10 @@ public class TripleDES implements StrongCryptography {
         String encryptedString = null;
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key, new SecureRandom());
-            byte[] plainText = unencryptedString.getBytes(UNICODE_FORMAT);
+            byte[] plainText = unencryptedString.getBytes(StandardCharsets.UTF_8);
             byte[] encryptedText = cipher.doFinal(plainText);
             encryptedString = new String(Hex.encode(encryptedText));
-        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+        } catch (GeneralSecurityException e) {
             log.error("Error encrypting: ", e);
         }
         return encryptedString;
@@ -75,22 +73,8 @@ public class TripleDES implements StrongCryptography {
             byte[] plainText = cipher.doFinal(encryptedText);
             decryptedText= new String(plainText);
         } catch (GeneralSecurityException e) {
-            log.error("Error decrypting: ", e);;
+            log.error("Error decrypting: ", e);
         }
         return decryptedText;
     }
-
-    public static void main(String args []) throws GeneralSecurityException {
-        TripleDES td= new TripleDES();
-
-        String target="This is a test 3des Saturday project";
-        String encrypted=td.encrypt(target);
-        String decrypted=td.decrypt(encrypted);
-
-        System.out.println("String To Encrypt:"+ target);
-        System.out.println("Encrypted String:" + encrypted);
-        System.out.println("Decrypted String:" + decrypted);
-
-    }
-
 }
