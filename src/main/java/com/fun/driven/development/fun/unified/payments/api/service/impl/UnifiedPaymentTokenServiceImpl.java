@@ -64,6 +64,13 @@ public class UnifiedPaymentTokenServiceImpl implements UnifiedPaymentTokenServic
     }
 
     @Override
+    public Optional<UnifiedPaymentTokenDTO> findByPayloadAndMerchantId(String payload, long merchantId) {
+        log.debug("Request to get UnifiedPaymentToken by payload and merchantId {}", merchantId);
+        return unifiedPaymentTokenRepository.findByPayloadAndMerchantId(payload, merchantId)
+                                            .map(unifiedPaymentTokenMapper::toDto);
+    }
+
+    @Override
     public void delete(Long id) {
         log.debug("Request to delete UnifiedPaymentToken : {}", id);
         unifiedPaymentTokenRepository.deleteById(id);
