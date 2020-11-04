@@ -59,3 +59,12 @@ To check the logs, run:
 ```
 heroku logs --tail
 ```
+
+### To be done in future releases
+
+- Validate token expiry date and payment method unavailable periods before transaction
+- Turn payment gateway and vault into a java modules
+- Improve Sale response time
+- Automatic retry
+- Fallback retry, in case of unavailable payment processor
+- Fully i18n the API response messages
