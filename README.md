@@ -1,64 +1,30 @@
-# FunUnifiedPaymentsApi
+# Fun Unified Payments API
 
-This application was generated using JHipster 6.10.3, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.3](https://www.jhipster.tech/documentation-archive/v6.10.3).
+The main tool used to develop this project is [JHipster](https://www.jhipster.tech/). It's development platform that helps you
+bootstrapping all the different frameworks required to build modern web applications.
+
+The strategy chosen was to divide the project into small chunks that could be implemented separately and then glue them
+all together. Some of those are:
+
+- Understand current PCI DSS requirements for storage of cardholder data.
+- Unique transaction reference and token generation.
+- Learn how to use JHipster. Using [JDL Studio](https://start.jhipster.tech/jdl-studio/) to model the entities and relationships.
+- Define the [ER model](https://github.com/miguel-suarez/unified-payments-api/blob/master/documentation/er_diagram.png).
+- Define the [API documentation](https://github.com/miguel-suarez/unified-payments-api/blob/master/documentation/api.yml).
+- Implement the [Sale API](https://github.com/miguel-suarez/unified-payments-api/blob/master/src/main/java/com/fun/driven/development/fun/unified/payments/api/web/rest/PaymentResource.java).
+- Implement the [Tokenization API](https://github.com/miguel-suarez/unified-payments-api/blob/master/src/main/java/com/fun/driven/development/fun/unified/payments/api/web/rest/TokenResource.java).
+- Design and implement the Payments Gateway.
+- Integrate Braintree as a Payment processor.
+- Integrate a strong cryptographic library.
+- Bolt it all together!
 
 ## Development
 
-To start your application in the dev profile, run:
+Currently, there's an open [issue](https://github.com/miguel-suarez/unified-payments-api/issues/11) to fix the local
+development environment. Once it's fixed you can start your application in the dev profile by running:
 
 ```
 ./gradlew
-```
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-### Doing API-First development using openapi-generator
-
-[OpenAPI-Generator]() is configured for this application. You can generate API code from the `src/main/resources/swagger/api.yml` definition file by running:
-
-```bash
-./gradlew openApiGenerate
-```
-
-Then implements the generated delegate classes with `@Service` classes.
-
-To edit the `api.yml` definition file, you can use a tool such as [Swagger-Editor](). Start a local instance of the swagger-editor using docker by running: `docker-compose -f src/main/docker/swagger-editor.yml up -d`. The editor will then be reachable at [http://localhost:7742](http://localhost:7742).
-
-Refer to [Doing API-First development][] for more details.
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the FunUnifiedPaymentsApi application for production, run:
-
-```
-
-
-./gradlew -Pprod clean bootJar
-
-```
-
-To ensure everything worked, run:
-
-```
-
-
-java -jar build/libs/*.jar
-
-```
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-```
-
-
-./gradlew -Pprod -Pwar clean bootWar
-
 ```
 
 ## Testing
@@ -66,72 +32,30 @@ To package your application as a war in order to deploy it to an application ser
 To launch your application's tests, run:
 
 ```
-./gradlew test integrationTest jacocoTestReport
+./gradlew test integrationTest
 ```
 
-For more information, refer to the [Running tests page][].
+## Deploying to production
 
-### Code quality
+### Heroku CLI installation, and first deployment
 
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
-
-```
-docker-compose -f src/main/docker/sonar.yml up -d
-```
-
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the gradle plugin.
-
-Then, run a Sonar analysis:
+Before you deploy the project for the first time you need to install heroku CLI and run the jhipster heroku configuration step:
 
 ```
-./gradlew -Pprod clean check jacocoTestReport sonarqube
+sudo snap install --classic heroku
+jhipster heroku
 ```
 
-For more information, refer to the [Code quality page][].
+### Subsequent deployments
 
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a postgresql database in a docker container, run:
+To build the final jar and optimize the FunUnifiedPaymentsApi application for production, run:
 
 ```
-docker-compose -f src/main/docker/postgresql.yml up -d
+git push heroku master
 ```
 
-To stop it and remove the container, run:
+To check the logs, run:
 
 ```
-docker-compose -f src/main/docker/postgresql.yml down
+heroku logs --tail
 ```
-
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
-
-```
-./gradlew bootJar -Pprod jibDockerBuild
-```
-
-Then run:
-
-```
-docker-compose -f src/main/docker/app.yml up -d
-```
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
-
-To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
-
-[jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.10.3 archive]: https://www.jhipster.tech/documentation-archive/v6.10.3
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.3/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.3/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.3/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.3/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.3/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.3/setting-up-ci/
-[openapi-generator]: https://openapi-generator.tech
-[swagger-editor]: https://editor.swagger.io
-[doing api-first development]: https://www.jhipster.tech/documentation-archive/v6.10.3/doing-api-first-development/
