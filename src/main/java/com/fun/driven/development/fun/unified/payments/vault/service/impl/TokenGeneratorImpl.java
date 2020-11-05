@@ -1,6 +1,7 @@
-package com.fun.driven.development.fun.unified.payments.vault;
+package com.fun.driven.development.fun.unified.payments.vault.service.impl;
 
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+import com.fun.driven.development.fun.unified.payments.vault.service.TokenGenerator;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;

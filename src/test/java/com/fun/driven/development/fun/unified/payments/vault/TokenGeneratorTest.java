@@ -2,6 +2,7 @@ package com.fun.driven.development.fun.unified.payments.vault;
 
 import com.fun.driven.development.fun.unified.payments.api.FunUnifiedPaymentsApiApp;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+import com.fun.driven.development.fun.unified.payments.vault.service.TokenGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

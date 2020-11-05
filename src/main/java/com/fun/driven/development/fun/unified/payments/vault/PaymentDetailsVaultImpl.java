@@ -5,6 +5,7 @@ import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.Pa
 import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.vault.service.StrongCryptography;
+import com.fun.driven.development.fun.unified.payments.vault.service.TokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
