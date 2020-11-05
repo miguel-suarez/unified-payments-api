@@ -62,6 +62,7 @@ heroku logs --tail
 
 ### To be done in future releases
 
+- http requests must be automatically redirected to https
 - Validate token expiry date and payment method unavailable periods before transaction
 - Turn payment gateway and vault into a java modules
 - Improve Sale response time
