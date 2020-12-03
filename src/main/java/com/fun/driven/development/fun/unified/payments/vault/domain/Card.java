@@ -1,4 +1,4 @@
-package com.fun.driven.development.fun.unified.payments.vault;
+package com.fun.driven.development.fun.unified.payments.vault.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,7 +74,7 @@ public class Card {
     }
 
     @JsonIgnore
-    protected String toJson() {
+    public String toJson() {
         try {
             return objectMapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
@@ -84,7 +84,7 @@ public class Card {
     }
 
     @JsonIgnore
-    protected static Card fromJson(String json) throws JsonProcessingException {
+    public static Card fromJson(String json) throws JsonProcessingException {
         return objectMapper.readValue(json, Card.class);
     }
 }

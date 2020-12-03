@@ -5,22 +5,13 @@ import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantD
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.CardVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.TokenVM;
-import com.fun.driven.development.fun.unified.payments.vault.Card;
-import com.fun.driven.development.fun.unified.payments.vault.PaymentDetailsVault;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import com.fun.driven.development.fun.unified.payments.vault.domain.Card;
+import com.fun.driven.development.fun.unified.payments.vault.service.PaymentDetailsVault;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;

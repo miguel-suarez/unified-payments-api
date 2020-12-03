@@ -1,23 +1,14 @@
 package com.fun.driven.development.fun.unified.payments.gateway.processors;
 
-import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Environment;
-import com.braintreegateway.Result;
-import com.braintreegateway.Transaction;
-import com.braintreegateway.TransactionRequest;
-import com.braintreegateway.ValidationError;
-import com.braintreegateway.exceptions.AuthenticationException;
-import com.braintreegateway.exceptions.AuthorizationException;
-import com.braintreegateway.exceptions.BraintreeException;
-import com.braintreegateway.exceptions.RequestTimeoutException;
-import com.braintreegateway.exceptions.TooManyRequestsException;
+import com.braintreegateway.*;
+import com.braintreegateway.exceptions.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleProcessor;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.AmountConverter;
-import com.fun.driven.development.fun.unified.payments.vault.Card;
-import com.fun.driven.development.fun.unified.payments.vault.PaymentDetailsVault;
+import com.fun.driven.development.fun.unified.payments.vault.domain.Card;
+import com.fun.driven.development.fun.unified.payments.vault.service.PaymentDetailsVault;
 import io.github.jhipster.config.JHipsterConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

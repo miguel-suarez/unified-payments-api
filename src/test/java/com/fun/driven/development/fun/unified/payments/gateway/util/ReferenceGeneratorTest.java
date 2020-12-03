@@ -24,7 +24,7 @@ class ReferenceGeneratorTest {
     public void testUniqueReferencesGeneration() {
         List<String> references = new ArrayList<>();
 
-        for (int i = 1; i<= 15000; i++) {
+        for (int i = 1; i<= 10000; i++) {
             String reference = generator.generate();
             Assertions.assertFalse(references.contains(reference), "Found duplicated reference");
             references.add(reference);
