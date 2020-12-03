@@ -1,5 +1,9 @@
 # Fun Unified Payments API
 
+This is a first class payments infrastructure to allow any company wanting to process payments with a set of payment
+providers. The purpose it's to encapsulate the complexity of the payment gateway providing a straightforward API
+while making it very easy to integrate with new payment providers.
+
 The main tool used to develop this project is [JHipster](https://www.jhipster.tech/). It's development platform that helps you
 bootstrapping all the different frameworks required to build modern web applications.
 
