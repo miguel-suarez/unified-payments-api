@@ -55,7 +55,7 @@ public class BraintreeSaleProcessor implements SaleProcessor<TransactionRequest,
             return new TransactionRequest().amount(amount).creditCard().done();
         } else {
             return new TransactionRequest().amount(amount).creditCard()
-                                           .number(card.get().getCardNumber())
+                                           .number(card.get().getNumber())
                                            .expirationDate(card.get().getExpirationMMSlashYYYY())
                                            .done();
         }
