@@ -4,6 +4,7 @@ import com.fun.driven.development.fun.unified.payments.api.service.MerchantServi
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.mapper.CardVMMapper;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.mapper.TokenVMMapper;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.CardVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.TokenVM;
 import com.fun.driven.development.fun.unified.payments.vault.domain.Card;
@@ -29,7 +30,10 @@ public class TokenResource {
     private PaymentDetailsVault paymentDetailsVault;
 
     @Autowired
-    private CardVMMapper cardVMMapper;
+    private CardVMMapper cardMapper;
+
+    @Autowired
+    private TokenVMMapper tokenMapper;
 
     /**
      * POST /v1/unified/tokens : Generate a unified payment token for a card
@@ -62,9 +66,9 @@ public class TokenResource {
         if (validationError.isPresent()) return validationError.get();
 
         long merchantId = findMerchantId(merchantReference);
-        Card cardEntity = cardVMMapper.toEntity(card);
+        Card cardEntity = cardMapper.toEntity(card);
         UnifiedPaymentTokenDTO tokenDTO = paymentDetailsVault.tokenize(merchantId, cardEntity);
-        return ResponseEntity.ok().body(TokenVM.from(tokenDTO));
+        return ResponseEntity.ok().body(tokenMapper.fromDto(tokenDTO));
     }
 
     private long findMerchantId(String merchantReference) {

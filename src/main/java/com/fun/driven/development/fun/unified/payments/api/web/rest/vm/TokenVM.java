@@ -2,7 +2,6 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest.vm;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -25,11 +24,6 @@ public class TokenVM {
 
     @ApiModelProperty(example = "User isn't allow to perform the requested action")
     private String errorMessage;
-
-    public static TokenVM from(UnifiedPaymentTokenDTO token) {
-        return new TokenVM().token(token.getToken())
-                            .validUntil(token.getValidUntil());
-    }
 
     public String getToken() {
         return token;
