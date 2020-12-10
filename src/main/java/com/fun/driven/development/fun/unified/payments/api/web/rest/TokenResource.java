@@ -3,6 +3,7 @@ package com.fun.driven.development.fun.unified.payments.api.web.rest;
 import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
 import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.mapper.CardVMMapper;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.CardVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.TokenVM;
 import com.fun.driven.development.fun.unified.payments.vault.domain.Card;
@@ -26,6 +27,9 @@ public class TokenResource {
 
     @Autowired
     private PaymentDetailsVault paymentDetailsVault;
+
+    @Autowired
+    private CardVMMapper cardVMMapper;
 
     /**
      * POST /v1/unified/tokens : Generate a unified payment token for a card
@@ -58,14 +62,9 @@ public class TokenResource {
         if (validationError.isPresent()) return validationError.get();
 
         long merchantId = findMerchantId(merchantReference);
-        UnifiedPaymentTokenDTO tokenDTO = paymentDetailsVault.tokenize(merchantId, vmToDTO(card));
+        Card cardEntity = cardVMMapper.toEntity(card);
+        UnifiedPaymentTokenDTO tokenDTO = paymentDetailsVault.tokenize(merchantId, cardEntity);
         return ResponseEntity.ok().body(TokenVM.from(tokenDTO));
-    }
-
-    private Card vmToDTO(CardVM cardVM) {
-        return new Card().setNumber(cardVM.getCardNumber())
-                         .setExpirationMonth(cardVM.getExpiryMonth())
-                         .setExpirationYear(cardVM.getExpiryYear());
     }
 
     private long findMerchantId(String merchantReference) {

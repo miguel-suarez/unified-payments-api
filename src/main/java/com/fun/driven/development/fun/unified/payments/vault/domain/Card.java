@@ -18,49 +18,49 @@ public class Card {
     private static final Logger log = LoggerFactory.getLogger(Card.class);
 
     @NotNull
-    private String number;
+    private String cardNumber;
     @NotNull
-    private Integer expirationMonth;
+    private Integer expiryMonth;
     @NotNull
-    private Integer expirationYear;
+    private Integer expiryYear;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getNumber() {
-        return number;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
-    public Card setNumber(String number) {
-        this.number = number;
+    public Card setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
         return this;
     }
 
-    public Integer getExpirationMonth() {
-        return expirationMonth;
+    public Integer getExpiryMonth() {
+        return expiryMonth;
     }
 
-    public Card setExpirationMonth(Integer expirationMonth) {
-        this.expirationMonth = expirationMonth;
+    public Card setExpiryMonth(Integer expiryMonth) {
+        this.expiryMonth = expiryMonth;
         return this;
     }
 
-    public Integer getExpirationYear() {
-        return expirationYear;
+    public Integer getExpiryYear() {
+        return expiryYear;
     }
 
     @JsonIgnore
     public String getExpirationMMSlashYYYY() {
-        return String.format("%02d", expirationMonth) + "/" + String.format("%04d", expirationYear);
+        return String.format("%02d", expiryMonth) + "/" + String.format("%04d", expiryYear);
     }
 
-    public Card setExpirationYear(Integer expirationYear) {
-        this.expirationYear = expirationYear;
+    public Card setExpiryYear(Integer expiryYear) {
+        this.expiryYear = expiryYear;
         return this;
     }
 
     @JsonIgnore
     public Instant lastUsableUTCInstant() {
-        LocalDate firstDayMonthExpiry = LocalDate.of(expirationYear, expirationMonth, 1);
+        LocalDate firstDayMonthExpiry = LocalDate.of(expiryYear, expiryMonth, 1);
         LocalDateTime expiryDateTime = firstDayMonthExpiry.with(TemporalAdjusters.lastDayOfMonth())
                                                           .atTime(23,59,59);
         return expiryDateTime.toInstant(ZoneOffset.UTC);
@@ -69,8 +69,8 @@ public class Card {
     @Override
     public String toString() {
         return "Card{" + "number='xxxxxxxxxxxxx'" +
-            ", expirationMonth=" + expirationMonth +
-            ", expirationYear=" + expirationYear + '}';
+            ", expirationMonth=" + expiryMonth +
+            ", expirationYear=" + expiryYear + '}';
     }
 
     @JsonIgnore
