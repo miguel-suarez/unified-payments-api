@@ -1,17 +1,8 @@
 package com.fun.driven.development.fun.unified.payments.api.web.rest;
 
-import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.TransactionType;
-import com.fun.driven.development.fun.unified.payments.api.domain.enumeration.UnifiedTransactionResult;
-import com.fun.driven.development.fun.unified.payments.api.service.CurrencyService;
-import com.fun.driven.development.fun.unified.payments.api.service.MerchantService;
-import com.fun.driven.development.fun.unified.payments.api.service.PaymentMethodCredentialService;
-import com.fun.driven.development.fun.unified.payments.api.service.TransactionService;
-import com.fun.driven.development.fun.unified.payments.api.service.UnifiedPaymentTokenService;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.CurrencyDTO;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.MerchantDTO;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.PaymentMethodCredentialDTO;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.TransactionDTO;
-import com.fun.driven.development.fun.unified.payments.api.service.dto.UnifiedPaymentTokenDTO;
+import com.fun.driven.development.fun.unified.payments.api.service.*;
+import com.fun.driven.development.fun.unified.payments.api.service.dto.*;
+import com.fun.driven.development.fun.unified.payments.api.web.rest.mapper.TransactionDTOMapper;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleRequestVM;
 import com.fun.driven.development.fun.unified.payments.api.web.rest.vm.SaleResultVM;
 import com.fun.driven.development.fun.unified.payments.gateway.core.AvailableProcessor;
@@ -20,24 +11,14 @@ import com.fun.driven.development.fun.unified.payments.gateway.core.SaleRequest;
 import com.fun.driven.development.fun.unified.payments.gateway.core.SaleResult;
 import com.fun.driven.development.fun.unified.payments.gateway.util.ReferenceGenerator;
 import com.fun.driven.development.fun.unified.payments.vault.service.StrongCryptography;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Instant;
 import java.util.Optional;
 
 @RestController
@@ -50,6 +31,9 @@ public class PaymentResource {
 
     @Autowired
     private PaymentMethodCredentialService credentialService;
+
+    @Autowired
+    private TransactionDTOMapper transactionMapper;
 
     @Autowired
     private UnifiedPaymentTokenService tokenService;
@@ -106,7 +90,7 @@ public class PaymentResource {
         SaleResult saleResult = paymentGateway.using(requestPair.getFirst()).sale(requestPair.getSecond());
         SaleResultVM result = SaleResultVM.fromGatewayResult(saleResult);
 
-        TransactionDTO transaction = vmToDTO(request, result);
+        TransactionDTO transaction = transactionMapper.toDTO(request, result);
         transactionService.save(fillIds(merchantReference, request, transaction));
         if (result.isOK()) return ResponseEntity.ok().body(result);
         return new ResponseEntity<>(result, HttpStatus.BAD_GATEWAY);
@@ -145,18 +129,6 @@ public class PaymentResource {
                                          .merchantCredentialsJson(credentialJson)
                                          .currencyIsoCode(request.getCurrencyIsoCode());
         return Pair.of(processor.get(), saleRequest);
-    }
-
-    public TransactionDTO vmToDTO(SaleRequestVM request, SaleResultVM result) {
-        TransactionDTO tx = new TransactionDTO();
-        tx.setAmount(request.getAmountInCents());
-        tx.setFunReference(result.getReference());
-        tx.setTransactionType(TransactionType.SALE);
-        tx.setTransactionDate(Instant.now());
-        tx.setResult(UnifiedTransactionResult.valueOf(result.getResultCode().name()));
-        tx.setProcessorResult(result.getProcessorResult());
-        tx.setExternalReference(request.getExternalReference());
-        return tx;
     }
 
     private TransactionDTO fillIds(String merchantReference, SaleRequestVM request, TransactionDTO transaction) {
